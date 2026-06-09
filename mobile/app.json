@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "NutriLens",
+    "slug": "nutrilens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "nutrilens",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#10b981"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "NutriLens uses your camera to analyze food photos.",
+        "NSPhotoLibraryUsageDescription": "NutriLens needs photo access to analyze food images."
+      }
+    },
+    "android": {
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "NutriLens needs access to your photos to analyze meals.",
+          "cameraPermission": "NutriLens uses your camera to analyze food photos."
+        }
+      ],
+      "expo-asset"
+    ]
+  }
+}
