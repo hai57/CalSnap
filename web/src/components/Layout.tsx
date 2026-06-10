@@ -1,77 +1,117 @@
-import type { ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from '../auth/AuthContext';
+import { colors } from '../styles/theme';
+import {
+  HeaderRight,
+  LogoutButton,
+  Main,
+  MobileNav,
+  MobileNavItem,
+  NavItem,
+  UserEmail,
+} from './StLayout';
 
 const navItems = [
-  { to: "/", label: "Dashboard", end: true },
-  { to: "/add", label: "Add Food" },
-  { to: "/history", label: "History" },
-  { to: "/goals", label: "Goals" },
+  { to: '/', label: 'Dashboard', end: true },
+  { to: '/add', label: 'Add Food' },
+  { to: '/history', label: 'History' },
+  { to: '/goals', label: 'Goals' },
 ];
+
+const Shell = styled.div`
+  margin: 0 auto;
+  display: flex;
+  min-height: 100vh;
+  max-width: 64rem;
+  flex-direction: column;
+  padding: 0 1rem;
+`;
+
+const Header = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+`;
+
+const Brand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const BrandMark = styled.div`
+  display: grid;
+  height: 2.25rem;
+  width: 2.25rem;
+  place-items: center;
+  border-radius: 0.75rem;
+  background: ${colors.brand500};
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: ${colors.white};
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const BrandName = styled.span`
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+`;
+
+const DesktopNav = styled.nav`
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
+
+  @media (min-width: 640px) {
+    display: flex;
+  }
+`;
 
 export function Layout({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-4">
-      <header className="flex items-center justify-between py-5">
-        <div className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-brand-500 text-lg font-bold text-white shadow">
-            N
-          </div>
-          <span className="text-xl font-bold tracking-tight">NutriLens</span>
-        </div>
-        <nav className="hidden items-center gap-1 sm:flex">
+    <Shell>
+      <Header>
+        <Brand>
+          <BrandMark>N</BrandMark>
+          <BrandName>NutriLens</BrandName>
+        </Brand>
+        <DesktopNav>
           {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  isActive ? "bg-brand-100 text-brand-700" : "text-slate-600 hover:bg-slate-100"
-                }`
-              }
-            >
+            <NavItem key={item.to} to={item.to} end={item.end}>
               {item.label}
-            </NavLink>
+            </NavItem>
           ))}
-        </nav>
-        <div className="flex items-center gap-3">
-          <span className="hidden text-sm text-slate-500 md:inline">{user?.email}</span>
-          <button
+        </DesktopNav>
+        <HeaderRight>
+          <UserEmail>{user?.email}</UserEmail>
+          <LogoutButton
             onClick={() => {
               logout();
-              navigate("/login");
+              navigate('/login');
             }}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
           >
             Log out
-          </button>
-        </div>
-      </header>
+          </LogoutButton>
+        </HeaderRight>
+      </Header>
 
-      <main className="flex-1 pb-24 sm:pb-8">{children}</main>
+      <Main>{children}</Main>
 
-      {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-10 flex justify-around border-t border-slate-200 bg-white/90 py-2 backdrop-blur sm:hidden">
+      <MobileNav>
         {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) =>
-              `rounded-lg px-3 py-1.5 text-xs font-medium ${
-                isActive ? "text-brand-600" : "text-slate-500"
-              }`
-            }
-          >
+          <MobileNavItem key={item.to} to={item.to} end={item.end}>
             {item.label}
-          </NavLink>
+          </MobileNavItem>
         ))}
-      </nav>
-    </div>
+      </MobileNav>
+    </Shell>
   );
 }

@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
 
 import { Layout } from "./components/Layout";
 import { useAuth } from "./auth/AuthContext";
@@ -9,13 +10,20 @@ import { Goals } from "./pages/Goals";
 import { History } from "./pages/History";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { colors } from "./styles/theme";
+
+const FullScreenCenter = styled.div`
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  color: ${colors.slate500};
+`;
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center text-slate-500">Loading...</div>
-    );
+    return <FullScreenCenter>Loading...</FullScreenCenter>;
   }
   if (!user) return <Navigate to="/login" replace />;
   return <Layout>{children}</Layout>;
