@@ -1,6 +1,7 @@
-import { ApiClient } from "@shared/api";
+import { ApiClient } from '@shared/api';
 
-export const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const rawApiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+export const API_URL = rawApiUrl.replace(/\/+$/, '');
 
 const TOKEN_KEY = "calorie_token";
 
