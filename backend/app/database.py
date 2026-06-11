@@ -5,9 +5,15 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import settings
 
+DEFAULT_SQLITE_URL = "sqlite:///./calorie.db"
+
+# An empty/whitespace DATABASE_URL (e.g. a blank env var on Railway) would make
+# create_engine() crash at import time, before the app can even start. Fall back
+# to SQLite so the server still boots instead of dying on the healthcheck.
+database_url = (settings.database_url or "").strip() or DEFAULT_SQLITE_URL
+
 # Some hosts (e.g. Render, Heroku) hand out a "postgres://" URL, which SQLAlchemy
 # 2.0 no longer recognizes. Normalize it to the "postgresql://" dialect.
-database_url = settings.database_url
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
