@@ -86,6 +86,49 @@ docker compose up --build
 
 This starts Postgres and the backend on http://localhost:8000.
 
+## Deploy live (Vercel + Render)
+
+This repo ships ready-to-use config to host the whole app for free:
+
+- **Web (frontend)** -> Vercel (`web/vercel.json`)
+- **Backend + Postgres** -> Render (`render.yaml` blueprint)
+
+### 1. Push to GitHub
+
+```bash
+git add . && git commit -m "Add deploy config" && git push
+```
+
+### 2. Backend on Render
+
+1. Go to [Render](https://render.com) -> **New +** -> **Blueprint** and pick this repo.
+2. Render reads `render.yaml` and creates the `nutrilens-api` web service plus the
+   `nutrilens-db` Postgres database. `DATABASE_URL` and `SECRET_KEY` are wired
+   automatically.
+3. Leave `CORS_ORIGINS` empty for now (you'll fill it after step 3), click **Apply**.
+4. When the service is live, copy its URL, e.g. `https://nutrilens-api.onrender.com`.
+
+> To use the real AI model instead of mock data: set `MOCK_AI=false` and add
+> `OPENAI_API_KEY` in the service's **Environment** tab.
+
+### 3. Web on Vercel
+
+1. Go to [Vercel](https://vercel.com) -> **Add New** -> **Project**, import this repo.
+2. Set **Root Directory** to `web`. Vercel auto-detects Vite via `web/vercel.json`.
+3. Add an environment variable: `VITE_API_URL = https://nutrilens-api.onrender.com`
+   (your Render URL from step 2).
+4. **Deploy**, then copy the resulting URL, e.g. `https://nutrilens.vercel.app`.
+
+### 4. Connect the two (CORS)
+
+Back in Render, set `CORS_ORIGINS` to your Vercel URL (e.g.
+`https://nutrilens.vercel.app`) and let it redeploy. Done - the live site can now
+talk to the API.
+
+> **Free-tier notes:** Render free services sleep after inactivity (first request
+> wakes them, ~30s cold start). Uploaded images live on ephemeral disk and are lost
+> on redeploy - swap `UPLOAD_DIR` for S3-compatible storage for persistence.
+
 ## Switching the AI provider
 
 `backend/app/services/ai.py` isolates all AI calls behind `analyze_text()` and
