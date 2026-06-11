@@ -54,12 +54,13 @@ export function Field({
   label,
   ...rest
 }: TextInputProps & { label: string }) {
+  const disabled = rest.editable === false;
   return (
     <View style={{ marginBottom: 14 }}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         placeholderTextColor={colors.muted}
-        style={styles.input}
+        style={[styles.input, disabled && styles.inputDisabled]}
         {...rest}
       />
     </View>
@@ -99,5 +100,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
     backgroundColor: "#fff",
+  },
+  inputDisabled: {
+    opacity: 0.5,
+    backgroundColor: colors.bg,
   },
 });

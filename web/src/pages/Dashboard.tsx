@@ -9,7 +9,6 @@ import { todayStr } from '../lib/date';
 import { formatTime } from '../lib/date';
 import { Card } from '../styles/ui';
 import {
-  AddLink,
   DeleteButton,
   EmptyLink,
   EmptyState,
@@ -72,7 +71,6 @@ export function Dashboard() {
             })}
           </Subtitle>
         </div>
-        <AddLink to="/add">+ Add food</AddLink>
       </HeaderRow>
 
       <Grid>

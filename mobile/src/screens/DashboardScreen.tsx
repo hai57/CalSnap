@@ -102,7 +102,7 @@ export function DashboardScreen() {
         ) : (
           <Card>
             <Text style={{ color: colors.muted, textAlign: "center" }}>
-              No meals yet. Tap the Add tab to log your first meal.
+              No meals yet. Tap "+ Add food" to log your first meal.
             </Text>
           </Card>
         )}

@@ -15,12 +15,13 @@ export const GlobalStyle = createGlobalStyle`
     height: 100%;
   }
 
+  html {
+    background: ${colors.slate50};
+  }
+
   body {
     margin: 0;
-    background:
-      radial-gradient(1200px 600px at 100% -10%, ${colors.brand100} 0%, transparent 50%),
-      radial-gradient(900px 500px at -10% 110%, #cffafe 0%, transparent 45%),
-      ${colors.slate50};
+    background: transparent;
     color: ${colors.slate900};
     font-family: ${font.sans};
     -webkit-font-smoothing: antialiased;

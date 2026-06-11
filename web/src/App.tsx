@@ -10,6 +10,7 @@ import { Goals } from "./pages/Goals";
 import { History } from "./pages/History";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { Settings } from "./pages/Settings";
 import { colors } from "./styles/theme";
 
 const FullScreenCenter = styled.div`
@@ -84,6 +85,14 @@ export default function App() {
         element={
           <Protected>
             <Goals />
+          </Protected>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <Protected>
+            <Settings />
           </Protected>
         }
       />

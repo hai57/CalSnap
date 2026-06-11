@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { colors } from '../styles/theme';
-import { Card, PrimaryButton } from '../styles/ui';
+import { Card } from '../styles/ui';
 
 export {
   PageColumn as Page,
@@ -15,11 +15,6 @@ export const HeaderRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-export const AddLink = styled(PrimaryButton).attrs({ as: Link })`
-  text-decoration: none;
-  padding: 0.625rem 1rem;
 `;
 
 export const Grid = styled.div`

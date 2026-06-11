@@ -11,6 +11,7 @@ import type {
   FoodEntryUpdate,
   Token,
   User,
+  UserSettings,
 } from "./types";
 
 export interface ApiClientOptions {
@@ -131,5 +132,14 @@ export class ApiClient {
 
   setGoal(goal: DailyGoal): Promise<DailyGoal> {
     return this.json<DailyGoal>("/api/goal", "PUT", goal);
+  }
+
+  // ---------- Settings ----------
+  getSettings(): Promise<UserSettings> {
+    return this.request<UserSettings>("/api/settings");
+  }
+
+  setSettings(settings: UserSettings): Promise<UserSettings> {
+    return this.json<UserSettings>("/api/settings", "PUT", settings);
   }
 }

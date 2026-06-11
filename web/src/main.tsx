@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
 import { AuthProvider } from "./auth/AuthContext";
+import { Background } from "./styles/Background";
 import { GlobalStyle } from "./styles/global";
 
 const queryClient = new QueryClient({
@@ -14,6 +15,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <GlobalStyle />
+    <Background />
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>

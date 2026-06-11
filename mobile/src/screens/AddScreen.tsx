@@ -22,7 +22,7 @@ export function AddScreen({ navigation }: { navigation: any }) {
         onBack={() => setResult(null)}
         onSaved={() => {
           setResult(null);
-          navigation.navigate("Today");
+          navigation.navigate("Main", { screen: "Today" });
         }}
       />
     );

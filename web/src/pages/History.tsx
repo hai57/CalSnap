@@ -22,7 +22,14 @@ import {
   SectionTitle,
   Subtitle as StatLabel,
 } from '../styles/ui';
-import { ChartWrap, StatGrid, StatValue } from './StHistory';
+import {
+  ChartWrap,
+  EditGoalsButton,
+  GoalStatCard,
+  HeaderRow,
+  StatGrid,
+  StatValue,
+} from './StHistory';
 
 const DAYS = 7;
 
@@ -70,12 +77,15 @@ export function History() {
 
   return (
     <Page>
-      <Title>History</Title>
+      <HeaderRow>
+        <Title>Progress</Title>
+        <EditGoalsButton to="/goals">Edit goals</EditGoalsButton>
+      </HeaderRow>
 
       <StatGrid>
         <Stat label="Daily average" value={`${avg} kcal`} />
         <Stat label="Days logged" value={`${loggedDays.length} / ${DAYS}`} />
-        <Stat label="Calorie goal" value={`${Math.round(goal)} kcal`} />
+        <GoalStat label="Calorie goal" value={`${Math.round(goal)} kcal`} />
       </StatGrid>
 
       <Card>
@@ -134,5 +144,14 @@ function Stat({ label, value }: { label: string; value: string }) {
       <StatLabel>{label}</StatLabel>
       <StatValue>{value}</StatValue>
     </Card>
+  );
+}
+
+function GoalStat({ label, value }: { label: string; value: string }) {
+  return (
+    <GoalStatCard to="/goals" $padding="1rem">
+      <StatLabel>{label}</StatLabel>
+      <StatValue>{value}</StatValue>
+    </GoalStatCard>
   );
 }

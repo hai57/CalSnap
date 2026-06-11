@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useAuth } from '../auth/AuthContext';
 import { colors } from '../styles/theme';
+import { PrimaryButton } from '../styles/ui';
+import { LayoutActionProvider, useLayoutActionSlot } from './LayoutAction';
 import {
   HeaderRight,
   LogoutButton,
@@ -16,9 +18,8 @@ import {
 
 const navItems = [
   { to: '/', label: 'Dashboard', end: true },
-  { to: '/add', label: 'Add Food' },
-  { to: '/history', label: 'History' },
-  { to: '/goals', label: 'Goals' },
+  { to: '/history', label: 'Progress' },
+  { to: '/settings', label: 'Settings' },
 ];
 
 const Shell = styled.div`
@@ -72,9 +73,24 @@ const DesktopNav = styled.nav`
   }
 `;
 
+const AddButton = styled(PrimaryButton).attrs({ as: Link })`
+  text-decoration: none;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.875rem;
+`;
+
 export function Layout({ children }: { children: ReactNode }) {
+  return (
+    <LayoutActionProvider>
+      <LayoutShell>{children}</LayoutShell>
+    </LayoutActionProvider>
+  );
+}
+
+function LayoutShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { action } = useLayoutActionSlot();
 
   return (
     <Shell>
@@ -91,6 +107,8 @@ export function Layout({ children }: { children: ReactNode }) {
           ))}
         </DesktopNav>
         <HeaderRight>
+          {action}
+          <AddButton to="/add">+ Add food</AddButton>
           <UserEmail>{user?.email}</UserEmail>
           <LogoutButton
             onClick={() => {

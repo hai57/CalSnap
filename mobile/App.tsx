@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider, useAuth } from "./src/auth";
@@ -13,8 +13,10 @@ import { GoalsScreen } from "./src/screens/GoalsScreen";
 import { HistoryScreen } from "./src/screens/HistoryScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { RegisterScreen } from "./src/screens/RegisterScreen";
+import { SettingsScreen } from "./src/screens/SettingsScreen";
 
 const AuthStack = createNativeStackNavigator();
+const AppStack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
 function TabIcon({ label, focused }: { label: string; focused: boolean }) {
@@ -23,16 +25,36 @@ function TabIcon({ label, focused }: { label: string; focused: boolean }) {
   );
 }
 
+function AddFoodButton({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({
+        backgroundColor: pressed ? colors.brandDark : colors.brand,
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 10,
+        marginRight: 12,
+      })}
+    >
+      <Text style={{ color: "#fff", fontWeight: "700" }}>+ Add food</Text>
+    </Pressable>
+  );
+}
+
 function AppTabs() {
   return (
     <Tabs.Navigator
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         headerStyle: { backgroundColor: colors.bg },
         headerShadowVisible: false,
         headerTitleStyle: { fontWeight: "700" },
         tabBarActiveTintColor: colors.brandDark,
         tabBarInactiveTintColor: colors.muted,
-      }}
+        headerRight: () => (
+          <AddFoodButton onPress={() => navigation.navigate("Add")} />
+        ),
+      })}
     >
       <Tabs.Screen
         name="Today"
@@ -40,21 +62,33 @@ function AppTabs() {
         options={{ tabBarIcon: ({ focused }) => <TabIcon label="🏠" focused={focused} /> }}
       />
       <Tabs.Screen
-        name="Add"
-        component={AddScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon label="➕" focused={focused} /> }}
-      />
-      <Tabs.Screen
-        name="History"
+        name="Progress"
         component={HistoryScreen}
         options={{ tabBarIcon: ({ focused }) => <TabIcon label="📊" focused={focused} /> }}
       />
       <Tabs.Screen
-        name="Goals"
-        component={GoalsScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon label="🎯" focused={focused} /> }}
+        name="Settings"
+        component={SettingsScreen}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon label="⚙️" focused={focused} /> }}
       />
     </Tabs.Navigator>
+  );
+}
+
+function AppNavigator() {
+  return (
+    <AppStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.bg },
+        headerShadowVisible: false,
+        headerTitleStyle: { fontWeight: "700" },
+        headerTintColor: colors.text,
+      }}
+    >
+      <AppStack.Screen name="Main" component={AppTabs} options={{ headerShown: false }} />
+      <AppStack.Screen name="Add" component={AddScreen} options={{ title: "Add food" }} />
+      <AppStack.Screen name="Goals" component={GoalsScreen} options={{ title: "Daily goals" }} />
+    </AppStack.Navigator>
   );
 }
 
@@ -72,7 +106,7 @@ function Root() {
   return (
     <NavigationContainer>
       {user ? (
-        <AppTabs />
+        <AppNavigator />
       ) : (
         <AuthStack.Navigator screenOptions={{ headerShown: false }}>
           <AuthStack.Screen name="Login" component={LoginScreen} />

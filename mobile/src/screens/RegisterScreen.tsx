@@ -48,6 +48,7 @@ export function RegisterScreen({ navigation }: { navigation: any }) {
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder="you@example.com"
+          editable={!busy}
         />
         <Field
           label="Password"
@@ -55,11 +56,16 @@ export function RegisterScreen({ navigation }: { navigation: any }) {
           onChangeText={setPassword}
           secureTextEntry
           placeholder="At least 6 characters"
+          editable={!busy}
         />
         {error && <Text style={{ color: colors.danger, marginBottom: 12 }}>{error}</Text>}
         <PrimaryButton title="Sign up" onPress={submit} loading={busy} />
 
-        <Pressable onPress={() => navigation.navigate("Login")} style={{ marginTop: 20 }}>
+        <Pressable
+          onPress={() => navigation.navigate("Login")}
+          disabled={busy}
+          style={{ marginTop: 20, opacity: busy ? 0.5 : 1 }}
+        >
           <Text style={{ textAlign: "center", color: colors.muted }}>
             Already have an account?{" "}
             <Text style={{ color: colors.brandDark, fontWeight: "700" }}>Log in</Text>

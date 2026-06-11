@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 import type { DailySummary } from "@shared/types";
 
@@ -22,7 +22,7 @@ function lastNDays(n: number): string[] {
   return out;
 }
 
-export function HistoryScreen() {
+export function HistoryScreen({ navigation }: { navigation: any }) {
   const [data, setData] = useState<{ day: string; calories: number }[]>([]);
   const [goal, setGoal] = useState(2000);
 
@@ -56,10 +56,31 @@ export function HistoryScreen() {
       style={{ flex: 1, backgroundColor: colors.bg }}
       contentContainerStyle={{ padding: 16, gap: 16 }}
     >
+      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+        <Pressable
+          onPress={() => navigation.navigate("Goals")}
+          hitSlop={8}
+          style={({ pressed }) => ({
+            paddingHorizontal: 14,
+            paddingVertical: 8,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: colors.border,
+            backgroundColor: pressed ? colors.border : "#fff",
+          })}
+        >
+          <Text style={{ color: colors.text, fontWeight: "600" }}>Edit goals</Text>
+        </Pressable>
+      </View>
+
       <View style={{ flexDirection: "row", gap: 12 }}>
         <Stat label="Avg / day" value={`${avg}`} />
         <Stat label="Days logged" value={`${logged.length}/${DAYS}`} />
-        <Stat label="Goal" value={`${Math.round(goal)}`} />
+        <Stat
+          label="Goal"
+          value={`${Math.round(goal)}`}
+          onPress={() => navigation.navigate("Goals")}
+        />
       </View>
 
       <Card>
@@ -95,13 +116,31 @@ export function HistoryScreen() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <Card style={{ flex: 1, padding: 12 }}>
+function Stat({
+  label,
+  value,
+  onPress,
+}: {
+  label: string;
+  value: string;
+  onPress?: () => void;
+}) {
+  const inner = (
+    <>
       <Text style={{ fontSize: 12, color: colors.muted }}>{label}</Text>
       <Text style={{ fontSize: 20, fontWeight: "800", color: colors.text, marginTop: 2 }}>
         {value}
       </Text>
-    </Card>
+    </>
   );
+
+  if (onPress) {
+    return (
+      <Pressable onPress={onPress} style={{ flex: 1 }}>
+        <Card style={{ flex: 1, padding: 12, borderColor: colors.brand }}>{inner}</Card>
+      </Pressable>
+    );
+  }
+
+  return <Card style={{ flex: 1, padding: 12 }}>{inner}</Card>;
 }

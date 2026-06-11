@@ -68,6 +68,24 @@ export interface DailyGoal {
   fat_target: number;
 }
 
+export type DietMode =
+  | "balanced"
+  | "low_carb"
+  | "low_fat"
+  | "high_protein"
+  | "keto"
+  | "vegetarian";
+
+export type WeightUnit = "kg" | "lb";
+
+export interface UserSettings {
+  weight_kg: number;
+  weight_unit: WeightUnit;
+  diet_mode: DietMode;
+  steps_target: number;
+  water_ml: number;
+}
+
 export interface MacroTotals {
   calories: number;
   protein: number;

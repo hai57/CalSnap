@@ -55,6 +55,7 @@ export function LoginScreen({ navigation }: { navigation: any }) {
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder="you@example.com"
+          editable={!busy}
         />
         <Field
           label="Password"
@@ -62,11 +63,16 @@ export function LoginScreen({ navigation }: { navigation: any }) {
           onChangeText={setPassword}
           secureTextEntry
           placeholder="••••••••"
+          editable={!busy}
         />
         {error && <Text style={{ color: colors.danger, marginBottom: 12 }}>{error}</Text>}
         <PrimaryButton title="Log in" onPress={submit} loading={busy} />
 
-        <Pressable onPress={() => navigation.navigate("Register")} style={{ marginTop: 20 }}>
+        <Pressable
+          onPress={() => navigation.navigate("Register")}
+          disabled={busy}
+          style={{ marginTop: 20, opacity: busy ? 0.5 : 1 }}
+        >
           <Text style={{ textAlign: "center", color: colors.muted }}>
             No account? <Text style={{ color: colors.brandDark, fontWeight: "700" }}>Sign up</Text>
           </Text>
