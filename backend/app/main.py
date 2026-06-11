@@ -6,7 +6,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.exc import OperationalError
 
 from app.config import settings
 from app.database import Base, engine
@@ -15,20 +14,27 @@ from app.routers import analyze, auth, entries, settings as settings_router, sum
 logger = logging.getLogger("uvicorn.error")
 
 
-def _init_db(retries: int = 10, delay: float = 3.0) -> None:
-    # On platforms like Railway, private networking to Postgres can take a few
-    # seconds to come up after the container starts, so retry instead of crashing.
-    last_err: Exception | None = None
+def _init_db(retries: int = 8, delay: float = 3.0) -> None:
+    # Log which database we're actually targeting (password hidden) so deploy
+    # logs reveal whether DATABASE_URL resolved (postgres vs sqlite fallback).
+    try:
+        logger.info("Using database: %s", engine.url.render_as_string(hide_password=True))
+    except Exception:  # noqa: BLE001 - never let logging break startup
+        pass
+
+    # On Railway, private networking to Postgres can take a few seconds after the
+    # container starts. Retry, but DO NOT crash the app: keeping the web server up
+    # lets /api/health pass and surfaces the real DB error in the logs/requests.
     for attempt in range(1, retries + 1):
         try:
             Base.metadata.create_all(bind=engine)
             logger.info("Database ready (attempt %d).", attempt)
             return
-        except OperationalError as err:  # DB not reachable yet
-            last_err = err
+        except Exception as err:  # noqa: BLE001 - report any connection/url error
             logger.warning("DB not ready (attempt %d/%d): %s", attempt, retries, err)
-            time.sleep(delay)
-    raise RuntimeError(f"Could not connect to the database after {retries} attempts") from last_err
+            if attempt < retries:
+                time.sleep(delay)
+    logger.error("Could not initialize the database; starting anyway. Check DATABASE_URL.")
 
 
 @asynccontextmanager
