@@ -50,6 +50,9 @@ export const AnimatedCard = styled(StackCard)<{ $delay?: number }>`
 `;
 
 export const HeaderSaveButton = styled(PrimaryButton)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
   font-size: 0.875rem;
   padding: 0.5rem 0.875rem;
 `;

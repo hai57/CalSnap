@@ -26,6 +26,23 @@ function Base({
   );
 }
 
+export function PlusIcon({ size, color = '#000' }: IconProps) {
+  return (
+    <Base size={size}>
+      <Path d="M12 5v14" {...stroke(color)} />
+      <Path d="M5 12h14" {...stroke(color)} />
+    </Base>
+  );
+}
+
+export function CheckIcon({ size, color = '#000' }: IconProps) {
+  return (
+    <Base size={size}>
+      <Path d="M20 6 9 17l-5-5" {...stroke(color)} />
+    </Base>
+  );
+}
+
 export function ScaleIcon({ size, color = '#000' }: IconProps) {
   return (
     <Base size={size}>

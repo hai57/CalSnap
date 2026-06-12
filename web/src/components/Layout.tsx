@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useAuth } from '../auth/AuthContext';
 import { useLang } from '../i18n';
+import { PlusIcon } from './BaseIcons';
 import { colors } from '../styles/theme';
 import { PrimaryButton } from '../styles/ui';
 import { LayoutActionProvider, useLayoutActionSlot } from './LayoutAction';
@@ -98,6 +99,9 @@ const DesktopNav = styled.nav`
 `;
 
 const AddButton = styled(PrimaryButton).attrs({ as: Link })`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
   text-decoration: none;
   font-size: 0.875rem;
   padding: 0.5rem 0.875rem;
@@ -114,8 +118,10 @@ export function Layout({ children }: { children: ReactNode }) {
 function LayoutShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { action } = useLayoutActionSlot();
   const { t } = useLang();
+  const onProfile = location.pathname.startsWith('/profile');
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -148,7 +154,12 @@ function LayoutShell({ children }: { children: ReactNode }) {
         </DesktopNav>
         <HeaderRight>
           {action}
-          <AddButton to="/add">{t('+ Add food')}</AddButton>
+          {!onProfile && (
+            <AddButton to="/add">
+              <PlusIcon size={16} />
+              {t('Add food')}
+            </AddButton>
+          )}
           <UserEmail>{user?.email}</UserEmail>
           <LogoutButton
             onClick={() => {

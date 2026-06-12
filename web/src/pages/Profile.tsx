@@ -26,6 +26,7 @@ import {
   ActivityIcon,
   AvocadoIcon,
   BalanceIcon,
+  CheckIcon,
   DropletIcon,
   DumbbellIcon,
   FlameIcon,
@@ -246,6 +247,7 @@ export function Profile() {
       onClick={() => save.mutate()}
       disabled={save.isPending || loading || error}
     >
+      <CheckIcon size={16} />
       {save.isPending ? t('Saving...') : saved ? t('Saved') : t('Save')}
     </HeaderSaveButton>,
     [save.isPending, saved, loading, error, t],

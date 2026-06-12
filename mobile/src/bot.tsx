@@ -131,7 +131,8 @@ function deriveMood(
   const remaining = Math.max(0, Math.round(target - consumed));
   const over = Math.max(0, Math.round(consumed - target));
   const pct = Math.round((consumed / target) * 100);
-  const proteinLow = goal.protein_target > 0 && protein < goal.protein_target * 0.6;
+  const proteinLow =
+    goal.protein_target > 0 && protein < goal.protein_target * 0.6;
 
   if (consumed === 0) {
     return {
@@ -162,7 +163,10 @@ function deriveMood(
   if (pct <= 110) {
     return {
       mood: 'cheer',
-      messages: [t('Calorie goal reached today!'), t('Great, right on target!')],
+      messages: [
+        t('Calorie goal reached today!'),
+        t('Great, right on target!'),
+      ],
     };
   }
   return {
@@ -195,9 +199,7 @@ function answerFor(id: string, data: DailySummary | null, t: TFn): string {
       const pt = goal.protein_target;
       if (!pt) return t('You had {protein}g protein.', { protein });
       const note =
-        protein >= pt * 0.9
-          ? t('Looking good!')
-          : t('Add a bit more protein!');
+        protein >= pt * 0.9 ? t('Looking good!') : t('Add a bit more protein!');
       return t('Protein: {protein}/{pt}g. {note}', { protein, pt, note });
     }
     case 'next':
@@ -247,9 +249,22 @@ function OpenEye({ cx }: { cx: number }) {
     <G>
       <Ellipse cx={cx} cy={cy} rx={5} ry={6} fill={INK} />
       <Ellipse cx={cx} cy={cy + 0.4} rx={4.1} ry={5.2} fill="url(#nbIris)" />
-      <Ellipse cx={cx} cy={cy + 2.6} rx={2.5} ry={1.9} fill="#bfdbfe" opacity={0.75} />
+      <Ellipse
+        cx={cx}
+        cy={cy + 2.6}
+        rx={2.5}
+        ry={1.9}
+        fill="#bfdbfe"
+        opacity={0.75}
+      />
       <Path d={starPath(cx, cy - 0.8, 2.4)} fill="#ffffff" />
-      <Circle cx={cx + 1.7} cy={cy + 2.9} r={0.8} fill="#ffffff" opacity={0.9} />
+      <Circle
+        cx={cx + 1.7}
+        cy={cy + 2.9}
+        r={0.8}
+        fill="#ffffff"
+        opacity={0.9}
+      />
       <Path
         d={`M ${cx - 5.4} ${cy - 2.4} Q ${cx} ${cy - 8} ${cx + 5.4} ${cy - 2.4}`}
         stroke={INK}
@@ -286,7 +301,15 @@ function WideEye({ cx }: { cx: number }) {
   const cy = EYE_Y;
   return (
     <G>
-      <Ellipse cx={cx} cy={cy} rx={6.2} ry={7.2} fill="#ffffff" stroke={INK} strokeWidth={1.4} />
+      <Ellipse
+        cx={cx}
+        cy={cy}
+        rx={6.2}
+        ry={7.2}
+        fill="#ffffff"
+        stroke={INK}
+        strokeWidth={1.4}
+      />
       <Ellipse cx={cx} cy={cy + 0.6} rx={3.4} ry={4} fill="url(#nbIris)" />
       <Circle cx={cx - 1} cy={cy - 1.2} r={1.1} fill="#ffffff" />
     </G>
@@ -309,13 +332,29 @@ function Eyes({ mood }: { mood: Mood }) {
   const L = 32;
   const R = 48;
   const cy = EYE_Y;
-  if (mood === 'dragged') return (<G><WideEye cx={L} /><WideEye cx={R} /></G>);
-  if (mood === 'annoyed') return (<G><FlatEye cx={L} /><FlatEye cx={R} /></G>);
+  if (mood === 'dragged')
+    return (
+      <G>
+        <WideEye cx={L} />
+        <WideEye cx={R} />
+      </G>
+    );
+  if (mood === 'annoyed')
+    return (
+      <G>
+        <FlatEye cx={L} />
+        <FlatEye cx={R} />
+      </G>
+    );
   if (mood === 'cheer') {
     return (
       <G stroke={INK} strokeWidth={2} fill="none" strokeLinecap="round">
-        <Path d={`M ${L - 4.6} ${cy + 1} Q ${L} ${cy - 4.5} ${L + 4.6} ${cy + 1}`} />
-        <Path d={`M ${R - 4.6} ${cy + 1} Q ${R} ${cy - 4.5} ${R + 4.6} ${cy + 1}`} />
+        <Path
+          d={`M ${L - 4.6} ${cy + 1} Q ${L} ${cy - 4.5} ${L + 4.6} ${cy + 1}`}
+        />
+        <Path
+          d={`M ${R - 4.6} ${cy + 1} Q ${R} ${cy - 4.5} ${R + 4.6} ${cy + 1}`}
+        />
       </G>
     );
   }
@@ -323,15 +362,37 @@ function Eyes({ mood }: { mood: Mood }) {
     return (
       <G>
         <G stroke={INK} strokeWidth={2} fill="none" strokeLinecap="round">
-          <Path d={`M ${L - 4.6} ${cy - 1.2} Q ${L} ${cy + 2.6} ${L + 4.6} ${cy - 1.2}`} />
-          <Path d={`M ${R - 4.6} ${cy - 1.2} Q ${R} ${cy + 2.6} ${R + 4.6} ${cy - 1.2}`} />
+          <Path
+            d={`M ${L - 4.6} ${cy - 1.2} Q ${L} ${cy + 2.6} ${L + 4.6} ${cy - 1.2}`}
+          />
+          <Path
+            d={`M ${R - 4.6} ${cy - 1.2} Q ${R} ${cy + 2.6} ${R + 4.6} ${cy - 1.2}`}
+          />
         </G>
-        <Ellipse cx={R + 4.4} cy={cy + 4.6} rx={1.2} ry={1.8} fill="#7dd3fc" opacity={0.9} />
+        <Ellipse
+          cx={R + 4.4}
+          cy={cy + 4.6}
+          rx={1.2}
+          ry={1.8}
+          fill="#7dd3fc"
+          opacity={0.9}
+        />
       </G>
     );
   }
-  if (mood === 'think') return (<G><HalfEye cx={L} /><HalfEye cx={R} /></G>);
-  return (<G><OpenEye cx={L} /><OpenEye cx={R} /></G>);
+  if (mood === 'think')
+    return (
+      <G>
+        <HalfEye cx={L} />
+        <HalfEye cx={R} />
+      </G>
+    );
+  return (
+    <G>
+      <OpenEye cx={L} />
+      <OpenEye cx={R} />
+    </G>
+  );
 }
 
 function Brows({ mood }: { mood: Mood }) {
@@ -353,7 +414,13 @@ function Brows({ mood }: { mood: Mood }) {
   }
   if (mood === 'warn' || mood === 'sad') {
     return (
-      <G stroke={INK} strokeWidth={1.3} fill="none" strokeLinecap="round" opacity={0.85}>
+      <G
+        stroke={INK}
+        strokeWidth={1.3}
+        fill="none"
+        strokeLinecap="round"
+        opacity={0.85}
+      >
         <Path d="M 27.8 30.6 Q 32 28.8 35.8 30" />
         <Path d="M 44.2 30 Q 48 28.8 52.2 30.6" />
       </G>
@@ -361,7 +428,13 @@ function Brows({ mood }: { mood: Mood }) {
   }
   if (mood === 'think') {
     return (
-      <G stroke={INK} strokeWidth={1.3} fill="none" strokeLinecap="round" opacity={0.85}>
+      <G
+        stroke={INK}
+        strokeWidth={1.3}
+        fill="none"
+        strokeLinecap="round"
+        opacity={0.85}
+      >
         <Path d="M 27.8 29.6 Q 32 28.2 36 29.4" />
         <Path d="M 44 30.2 Q 48 29.6 52.2 30.4" />
       </G>
@@ -384,29 +457,66 @@ function Mouth({ mood }: { mood: Mood }) {
         />
       );
     case 'warn':
-      return <Path d="M 37.2 46.8 L 42.8 46.8" stroke="#be123c" strokeWidth={1.4} strokeLinecap="round" />;
+      return (
+        <Path
+          d="M 37.2 46.8 L 42.8 46.8"
+          stroke="#be123c"
+          strokeWidth={1.4}
+          strokeLinecap="round"
+        />
+      );
     case 'think':
       return (
-        <Path d="M 40.6 46.9 Q 42.4 47.8 44 46.4" stroke="#be123c" strokeWidth={1.3} strokeLinecap="round" fill="none" />
+        <Path
+          d="M 40.6 46.9 Q 42.4 47.8 44 46.4"
+          stroke="#be123c"
+          strokeWidth={1.3}
+          strokeLinecap="round"
+          fill="none"
+        />
       );
     case 'sad':
       return (
-        <Path d="M 36.8 47.9 Q 40 45.2 43.2 47.9" stroke="#be123c" strokeWidth={1.4} strokeLinecap="round" fill="none" />
+        <Path
+          d="M 36.8 47.9 Q 40 45.2 43.2 47.9"
+          stroke="#be123c"
+          strokeWidth={1.4}
+          strokeLinecap="round"
+          fill="none"
+        />
       );
     case 'annoyed':
       return (
-        <Path d="M 36.6 47.6 Q 40 46 43.4 47.8" stroke="#be123c" strokeWidth={1.4} strokeLinecap="round" fill="none" />
+        <Path
+          d="M 36.6 47.6 Q 40 46 43.4 47.8"
+          stroke="#be123c"
+          strokeWidth={1.4}
+          strokeLinecap="round"
+          fill="none"
+        />
       );
     default:
       return (
-        <Path d="M 36.6 45.9 Q 40 48.7 43.4 45.9" stroke="#be123c" strokeWidth={1.4} strokeLinecap="round" fill="none" />
+        <Path
+          d="M 36.6 45.9 Q 40 48.7 43.4 45.9"
+          stroke="#be123c"
+          strokeWidth={1.4}
+          strokeLinecap="round"
+          fill="none"
+        />
       );
   }
 }
 
 function FaceFx({ mood }: { mood: Mood }) {
   if (mood === 'dragged') {
-    return <Path d="M 55 30 q 2.4 3.2 0 4.6 q -2.4 -1.4 0 -4.6 Z" fill="#7dd3fc" opacity={0.9} />;
+    return (
+      <Path
+        d="M 55 30 q 2.4 3.2 0 4.6 q -2.4 -1.4 0 -4.6 Z"
+        fill="#7dd3fc"
+        opacity={0.9}
+      />
+    );
   }
   if (mood === 'annoyed') {
     return (
@@ -418,11 +528,15 @@ function FaceFx({ mood }: { mood: Mood }) {
   return null;
 }
 
-function ChibiBot({ mood, size }: { mood: Mood; size: number }) {
+export function ChibiBot({ mood, size }: { mood: Mood; size: number }) {
   const accent = MOOD_ACCENT[mood];
   const blush = mood === 'sad' ? 0.3 : 0.45;
   return (
-    <Svg width={size} height={(size * VB_H) / VB_W} viewBox={`0 0 ${VB_W} ${VB_H}`}>
+    <Svg
+      width={size}
+      height={(size * VB_H) / VB_W}
+      viewBox={`0 0 ${VB_W} ${VB_H}`}
+    >
       <Defs>
         <LinearGradient id="nbHair" x1="0" y1="0" x2="0" y2="1">
           <Stop offset="0" stopColor="#ffffff" />
@@ -454,20 +568,92 @@ function ChibiBot({ mood, size }: { mood: Mood; size: number }) {
         strokeWidth={0.7}
       />
 
-      <Path d="M 36.3 70.5 L 35.6 78.5" stroke="#eef2f7" strokeWidth={5} strokeLinecap="round" />
-      <Path d="M 43.7 70.5 L 44.4 78.5" stroke="#eef2f7" strokeWidth={5} strokeLinecap="round" />
-      <Rect x={31} y={78.8} width={8.6} height={7} rx={3.1} fill="url(#nbBlue)" stroke="#1d4ed8" strokeWidth={0.5} />
-      <Rect x={40.4} y={78.8} width={8.6} height={7} rx={3.1} fill="url(#nbBlue)" stroke="#1d4ed8" strokeWidth={0.5} />
+      <Path
+        d="M 36.3 70.5 L 35.6 78.5"
+        stroke="#eef2f7"
+        strokeWidth={5}
+        strokeLinecap="round"
+      />
+      <Path
+        d="M 43.7 70.5 L 44.4 78.5"
+        stroke="#eef2f7"
+        strokeWidth={5}
+        strokeLinecap="round"
+      />
+      <Rect
+        x={31}
+        y={78.8}
+        width={8.6}
+        height={7}
+        rx={3.1}
+        fill="url(#nbBlue)"
+        stroke="#1d4ed8"
+        strokeWidth={0.5}
+      />
+      <Rect
+        x={40.4}
+        y={78.8}
+        width={8.6}
+        height={7}
+        rx={3.1}
+        fill="url(#nbBlue)"
+        stroke="#1d4ed8"
+        strokeWidth={0.5}
+      />
 
-      <Path d="M 31.5 59.5 C 26 63.5 21.5 70 19.5 75 C 25.5 73 30.5 69 32.8 65.5 Z" fill="url(#nbSuit)" stroke="#bfdbfe" strokeWidth={0.6} />
-      <Path d="M 48.5 59.5 C 54 63.5 58.5 70 60.5 75 C 54.5 73 49.5 69 47.2 65.5 Z" fill="url(#nbSuit)" stroke="#bfdbfe" strokeWidth={0.6} />
+      <Path
+        d="M 31.5 59.5 C 26 63.5 21.5 70 19.5 75 C 25.5 73 30.5 69 32.8 65.5 Z"
+        fill="url(#nbSuit)"
+        stroke="#bfdbfe"
+        strokeWidth={0.6}
+      />
+      <Path
+        d="M 48.5 59.5 C 54 63.5 58.5 70 60.5 75 C 54.5 73 49.5 69 47.2 65.5 Z"
+        fill="url(#nbSuit)"
+        stroke="#bfdbfe"
+        strokeWidth={0.6}
+      />
 
-      <Path d="M 30.5 55.5 L 26.5 58.5" stroke="#334155" strokeWidth={5} strokeLinecap="round" />
-      <Path d="M 49.5 55.5 L 53.5 58.5" stroke="#334155" strokeWidth={5} strokeLinecap="round" />
-      <Path d="M 26.5 58.5 L 23 61.4" stroke="#f8fafc" strokeWidth={4.6} strokeLinecap="round" />
-      <Path d="M 53.5 58.5 L 57 61.4" stroke="#f8fafc" strokeWidth={4.6} strokeLinecap="round" />
-      <Circle cx={21} cy={63} r={3.1} fill="url(#nbBlue)" stroke="#1e40af" strokeWidth={0.5} />
-      <Circle cx={59} cy={63} r={3.1} fill="url(#nbBlue)" stroke="#1e40af" strokeWidth={0.5} />
+      <Path
+        d="M 30.5 55.5 L 26.5 58.5"
+        stroke="#334155"
+        strokeWidth={5}
+        strokeLinecap="round"
+      />
+      <Path
+        d="M 49.5 55.5 L 53.5 58.5"
+        stroke="#334155"
+        strokeWidth={5}
+        strokeLinecap="round"
+      />
+      <Path
+        d="M 26.5 58.5 L 23 61.4"
+        stroke="#f8fafc"
+        strokeWidth={4.6}
+        strokeLinecap="round"
+      />
+      <Path
+        d="M 53.5 58.5 L 57 61.4"
+        stroke="#f8fafc"
+        strokeWidth={4.6}
+        strokeLinecap="round"
+      />
+      <Circle
+        cx={21}
+        cy={63}
+        r={3.1}
+        fill="url(#nbBlue)"
+        stroke="#1e40af"
+        strokeWidth={0.5}
+      />
+      <Circle
+        cx={59}
+        cy={63}
+        r={3.1}
+        fill="url(#nbBlue)"
+        stroke="#1e40af"
+        strokeWidth={0.5}
+      />
 
       <Path
         d="M 32 52.5 C 29.5 55 28.5 62 30.5 67.5 C 32 70.8 34.5 72 40 72 C 45.5 72 48 70.8 49.5 67.5 C 51.5 62 50.5 55 48 52.5 C 45 50.8 35 50.8 32 52.5 Z"
@@ -475,14 +661,31 @@ function ChibiBot({ mood, size }: { mood: Mood; size: number }) {
         stroke={SUIT_EDGE}
         strokeWidth={0.7}
       />
-      <Path d="M 33.8 51.7 C 36.3 50.7 43.7 50.7 46.2 51.7 L 45.2 54.2 C 41.8 53.2 38.2 53.2 34.8 54.2 Z" fill="#1f2937" />
+      <Path
+        d="M 33.8 51.7 C 36.3 50.7 43.7 50.7 46.2 51.7 L 45.2 54.2 C 41.8 53.2 38.2 53.2 34.8 54.2 Z"
+        fill="#1f2937"
+      />
       <Circle cx={40} cy={59.5} r={4.8} fill={accent} opacity={0.18} />
       <Circle cx={40} cy={59.5} r={3.2} fill="#ffffff" />
       <Circle cx={40} cy={59.5} r={2.2} fill={accent} />
 
       <Ellipse cx={40} cy={35} rx={18.5} ry={16} fill="url(#nbSkin)" />
-      <Ellipse cx={27.5} cy={42.5} rx={3.3} ry={1.9} fill="#fb7185" opacity={blush} />
-      <Ellipse cx={52.5} cy={42.5} rx={3.3} ry={1.9} fill="#fb7185" opacity={blush} />
+      <Ellipse
+        cx={27.5}
+        cy={42.5}
+        rx={3.3}
+        ry={1.9}
+        fill="#fb7185"
+        opacity={blush}
+      />
+      <Ellipse
+        cx={52.5}
+        cy={42.5}
+        rx={3.3}
+        ry={1.9}
+        fill="#fb7185"
+        opacity={blush}
+      />
 
       <Eyes mood={mood} />
       <Brows mood={mood} />
@@ -519,8 +722,9 @@ const THINK_MS = 2400;
 const ANSWER_MS = 7000;
 
 export function NutriBot() {
-  const { enabled, setEnabled } = useBot();
-  if (!enabled) return <SadBox onWake={() => setEnabled(true)} />;
+  const { enabled } = useBot();
+  // When disabled the bot is hidden entirely; the sad face lives in Profile.
+  if (!enabled) return null;
   return <RoamingBot />;
 }
 
@@ -607,8 +811,18 @@ function RoamingBot() {
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(float, { toValue: 1, duration: 1700, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(float, { toValue: 0, duration: 1700, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(float, {
+          toValue: 1,
+          duration: 1700,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(float, {
+          toValue: 0,
+          duration: 1700,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
       ]),
     );
     loop.start();
@@ -623,8 +837,18 @@ function RoamingBot() {
     }
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(wobble, { toValue: 1, duration: 220, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
-        Animated.timing(wobble, { toValue: -1, duration: 220, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+        Animated.timing(wobble, {
+          toValue: 1,
+          duration: 220,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(wobble, {
+          toValue: -1,
+          duration: 220,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
       ]),
     );
     loop.start();
@@ -714,15 +938,18 @@ function RoamingBot() {
       : (answer ?? null);
   const bubbleVisible = !panelOpen && !!bubbleText;
 
-  const floatY = float.interpolate({ inputRange: [0, 1], outputRange: [0, -5] });
-  const rotate = wobble.interpolate({ inputRange: [-1, 1], outputRange: ['-9deg', '9deg'] });
+  const floatY = float.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -5],
+  });
+  const rotate = wobble.interpolate({
+    inputRange: [-1, 1],
+    outputRange: ['-9deg', '9deg'],
+  });
   const styles = makeStyles();
 
   return (
-    <Animated.View
-      pointerEvents="box-none"
-      style={[styles.layer]}
-    >
+    <Animated.View pointerEvents="box-none" style={[styles.layer]}>
       <Animated.View
         style={[
           styles.mover,
@@ -732,20 +959,31 @@ function RoamingBot() {
         {bubbleVisible && (
           <View
             pointerEvents="none"
-            style={[styles.bubble, onLeftHalf ? styles.bubbleLeft : styles.bubbleRight]}
+            style={[
+              styles.bubble,
+              onLeftHalf ? styles.bubbleLeft : styles.bubbleRight,
+            ]}
           >
             <Text style={styles.bubbleText}>{bubbleText}</Text>
           </View>
         )}
 
         {panelOpen && (
-          <View style={[styles.panel, onLeftHalf ? styles.bubbleLeft : styles.bubbleRight]}>
+          <View
+            style={[
+              styles.panel,
+              onLeftHalf ? styles.bubbleLeft : styles.bubbleRight,
+            ]}
+          >
             <Text style={styles.panelTitle}>{t('Ask NutriBot')}</Text>
             {QUESTIONS.map((q) => (
               <Pressable
                 key={q.id}
                 onPress={() => ask(q.id)}
-                style={({ pressed }) => [styles.chip, pressed && styles.chipPressed]}
+                style={({ pressed }) => [
+                  styles.chip,
+                  pressed && styles.chipPressed,
+                ]}
               >
                 <Text style={styles.chipText}>{t(q.label)}</Text>
               </Pressable>
@@ -753,7 +991,10 @@ function RoamingBot() {
           </View>
         )}
 
-        <Animated.View {...responder.panHandlers} style={{ transform: [{ translateY: floatY }] }}>
+        <Animated.View
+          {...responder.panHandlers}
+          style={{ transform: [{ translateY: floatY }] }}
+        >
           <Animated.View
             style={{ transform: [{ scaleX: facingLeft ? -1 : 1 }, { rotate }] }}
           >
@@ -765,134 +1006,105 @@ function RoamingBot() {
   );
 }
 
-function SadBox({ onWake }: { onWake: () => void }) {
-  const { t } = useLang();
-  const insets = useSafeAreaInsets();
-  const [open, setOpen] = useState(false);
-  const styles = makeStyles();
-  return (
-    <View pointerEvents="box-none" style={styles.layer}>
-      <Pressable
-        onPress={() => {
-          if (!open) {
-            setOpen(true);
-            return;
-          }
-          onWake();
-        }}
-        style={[styles.sadCard, { bottom: insets.bottom + TAB_RESERVE, right: MARGIN }]}
-      >
-        <ChibiBot mood="sad" size={44} />
-        {open && (
-          <View style={styles.sadText}>
-            <Text style={styles.sadTitle}>{t('NutriBot is sleeping')}</Text>
-            <Text style={styles.sadHint}>{t('Tap again to wake')}</Text>
-          </View>
-        )}
-      </Pressable>
-    </View>
-  );
-}
-
 function makeStyles() {
   return {
-  layer: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 50,
-  },
-  mover: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    alignItems: 'center' as const,
-  },
-  bubble: {
-    position: 'absolute' as const,
-    bottom: BOT_H + 8,
-    maxWidth: 220,
-    minWidth: 120,
-    backgroundColor: colors.card,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    shadowColor: '#0f172a',
-    shadowOpacity: 0.16,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 5,
-  },
-  bubbleLeft: { left: 0 },
-  bubbleRight: { right: 0 },
-  bubbleText: {
-    fontSize: 13,
-    fontWeight: '500' as const,
-    color: colors.text,
-    lineHeight: 18,
-  },
-  panel: {
-    position: 'absolute' as const,
-    bottom: BOT_H + 8,
-    width: 200,
-    backgroundColor: colors.card,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 10,
-    gap: 6,
-    shadowColor: '#0f172a',
-    shadowOpacity: 0.2,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
-  },
-  panelTitle: {
-    fontSize: 12,
-    fontWeight: '700' as const,
-    color: colors.muted,
-    paddingHorizontal: 2,
-  },
-  chip: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.chipBg,
-    borderRadius: 10,
-    paddingVertical: 9,
-    paddingHorizontal: 11,
-  },
-  chipPressed: {
-    backgroundColor: colors.brandLight,
-    borderColor: colors.brand,
-  },
-  chipText: {
-    fontSize: 13,
-    fontWeight: '500' as const,
-    color: colors.text,
-  },
-  sadCard: {
-    position: 'absolute' as const,
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    gap: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    shadowColor: '#0f172a',
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 6,
-  },
-  sadText: { gap: 2 },
-  sadTitle: { fontSize: 14, fontWeight: '700' as const, color: colors.text },
-  sadHint: { fontSize: 12, color: colors.muted },
+    layer: {
+      position: 'absolute' as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 50,
+    },
+    mover: {
+      position: 'absolute' as const,
+      top: 0,
+      left: 0,
+      alignItems: 'center' as const,
+    },
+    bubble: {
+      position: 'absolute' as const,
+      bottom: BOT_H + 8,
+      maxWidth: 220,
+      minWidth: 120,
+      backgroundColor: colors.card,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      shadowColor: '#0f172a',
+      shadowOpacity: 0.16,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 5,
+    },
+    bubbleLeft: { left: 0 },
+    bubbleRight: { right: 0 },
+    bubbleText: {
+      fontSize: 13,
+      fontWeight: '500' as const,
+      color: colors.text,
+      lineHeight: 18,
+    },
+    panel: {
+      position: 'absolute' as const,
+      bottom: BOT_H + 8,
+      width: 200,
+      backgroundColor: colors.card,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 10,
+      gap: 6,
+      shadowColor: '#0f172a',
+      shadowOpacity: 0.2,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 8,
+    },
+    panelTitle: {
+      fontSize: 12,
+      fontWeight: '700' as const,
+      color: colors.muted,
+      paddingHorizontal: 2,
+    },
+    chip: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.chipBg,
+      borderRadius: 10,
+      paddingVertical: 9,
+      paddingHorizontal: 11,
+    },
+    chipPressed: {
+      backgroundColor: colors.brandLight,
+      borderColor: colors.brand,
+    },
+    chipText: {
+      fontSize: 13,
+      fontWeight: '500' as const,
+      color: colors.text,
+    },
+    sadCard: {
+      position: 'absolute' as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      gap: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      backgroundColor: colors.card,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      shadowColor: '#0f172a',
+      shadowOpacity: 0.18,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 6,
+    },
+    sadText: { gap: 2 },
+    sadTitle: { fontSize: 14, fontWeight: '700' as const, color: colors.text },
+    sadHint: { fontSize: 12, color: colors.muted },
   };
 }

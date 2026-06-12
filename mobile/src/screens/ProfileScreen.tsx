@@ -20,7 +20,7 @@ import {
 
 import { api } from '../api';
 import { useAuth } from '../auth';
-import { useBot } from '../bot';
+import { ChibiBot, useBot } from '../bot';
 import { Card, PrimaryButton } from '../components';
 import { LanguageToggle, useLang } from '../i18n';
 import { ThemeToggle } from '../themeContext';
@@ -30,6 +30,7 @@ import {
   ActivityIcon,
   AvocadoIcon,
   BalanceIcon,
+  CheckIcon,
   DropletIcon,
   DumbbellIcon,
   FlameIcon,
@@ -367,9 +368,41 @@ export function ProfileScreen({ navigation }: { navigation: any }) {
             thumbColor="#ffffff"
           />
         </AppearanceRow>
+        {!botEnabled && (
+          <Pressable
+            onPress={() => setBotEnabled(true)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 12,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: colors.chipBg,
+              padding: 12,
+            }}
+          >
+            <ChibiBot mood="sad" size={44} />
+            <View style={{ flexShrink: 1 }}>
+              <Text
+                style={{ fontWeight: '700', fontSize: 14, color: colors.text }}
+              >
+                {t('NutriBot is sleeping')}
+              </Text>
+              <Text style={{ fontSize: 12, color: colors.muted }}>
+                {t('Tap to wake me up')}
+              </Text>
+            </View>
+          </Pressable>
+        )}
       </Card>
 
-      <PrimaryButton title={t('Save profile')} onPress={save} loading={busy} />
+      <PrimaryButton
+        title={t('Save profile')}
+        onPress={save}
+        loading={busy}
+        icon={<CheckIcon size={18} color="#fff" />}
+      />
 
       {/* Account */}
       <Card style={{ gap: 10 }}>

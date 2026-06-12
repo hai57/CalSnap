@@ -14,6 +14,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from './src/auth';
 import { BotProvider, NutriBot } from './src/bot';
 import { LanguageProvider, useLang } from './src/i18n';
+import { PlusIcon } from './src/icons';
 import { ThemeProvider, useTheme } from './src/themeContext';
 import { ToastProvider } from './src/toast';
 import { colors } from './src/theme';
@@ -41,6 +42,9 @@ function AddFoodButton({ onPress }: { onPress: () => void }) {
     <Pressable
       onPress={onPress}
       style={({ pressed }) => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
         backgroundColor: pressed ? colors.brandDark : colors.brand,
         paddingHorizontal: 14,
         paddingVertical: 8,
@@ -48,7 +52,8 @@ function AddFoodButton({ onPress }: { onPress: () => void }) {
         marginRight: 12,
       })}
     >
-      <Text style={{ color: '#fff', fontWeight: '700' }}>{t('+ Add food')}</Text>
+      <PlusIcon size={16} color="#fff" />
+      <Text style={{ color: '#fff', fontWeight: '700' }}>{t('Add food')}</Text>
     </Pressable>
   );
 }
@@ -94,6 +99,7 @@ function AppTabs() {
         component={ProfileScreen}
         options={{
           title: t('Profile'),
+          headerRight: () => null,
           tabBarIcon: ({ focused }) => <TabIcon label="⚙️" focused={focused} />,
         }}
       />

@@ -40,11 +40,13 @@ export function PrimaryButton({
   onPress,
   loading,
   disabled,
+  icon,
 }: {
   title: string;
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
+  icon?: React.ReactNode;
 }) {
   const off = disabled || loading;
   return (
@@ -52,6 +54,8 @@ export function PrimaryButton({
       onPress={onPress}
       disabled={off}
       style={({ pressed }) => ({
+        flexDirection: "row",
+        gap: 8,
         backgroundColor: pressed && !off ? colors.brandDark : colors.brand,
         paddingVertical: 14,
         borderRadius: 12,
@@ -63,9 +67,12 @@ export function PrimaryButton({
       {loading ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
-          {title}
-        </Text>
+        <>
+          {icon}
+          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
+            {title}
+          </Text>
+        </>
       )}
     </Pressable>
   );

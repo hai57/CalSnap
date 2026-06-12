@@ -6,6 +6,7 @@ import type { DailyGoal } from "@shared/types";
 
 import { api } from "../api";
 import { Card, Field, PrimaryButton } from "../components";
+import { CheckIcon } from "../icons";
 import { useLang } from "../i18n";
 import { colors } from "../theme";
 import { useToast } from "../toast";
@@ -96,7 +97,12 @@ export function GoalsScreen() {
           onChangeText={(v) => setForm((f) => ({ ...f, fat_target: v }))}
           keyboardType="numeric"
         />
-        <PrimaryButton title={t("Save goals")} onPress={save} loading={busy} />
+        <PrimaryButton
+          title={t("Save goals")}
+          onPress={save}
+          loading={busy}
+          icon={<CheckIcon size={18} color="#fff" />}
+        />
       </Card>
     </ScrollView>
   );

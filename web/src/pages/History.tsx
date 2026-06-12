@@ -3,6 +3,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -130,10 +131,16 @@ export function History() {
                 />
                 <Bar
                   dataKey="calories"
-                  fill="#10b981"
                   radius={[6, 6, 0, 0]}
                   maxBarSize={48}
-                />
+                >
+                  {chartData.map((d) => (
+                    <Cell
+                      key={d.day}
+                      fill={d.calories > goal ? '#ef4444' : '#10b981'}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </ChartWrap>

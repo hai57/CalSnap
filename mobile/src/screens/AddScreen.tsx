@@ -7,6 +7,7 @@ import type { AnalyzeResult } from "@shared/types";
 import { api } from "../api";
 import { Card, Field, PrimaryButton } from "../components";
 import { resolveImageUrl } from "../config";
+import { CheckIcon } from "../icons";
 import { useLang } from "../i18n";
 import { colors } from "../theme";
 import { useToast } from "../toast";
@@ -285,7 +286,12 @@ function Confirm({
             <Text style={{ color: colors.muted, fontWeight: "600" }}>{t("Back")}</Text>
           </Pressable>
           <View style={{ flex: 1 }}>
-            <PrimaryButton title={t("Save entry")} onPress={save} loading={busy} />
+            <PrimaryButton
+              title={t("Save entry")}
+              onPress={save}
+              loading={busy}
+              icon={<CheckIcon size={18} color="#fff" />}
+            />
           </View>
         </View>
       </Card>

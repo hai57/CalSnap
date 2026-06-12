@@ -15,6 +15,39 @@ import { useLang } from '../i18n';
 import { api } from '../lib/api';
 import { todayStr } from '../lib/date';
 import { colors } from '../styles/theme';
+import {
+  Anchor,
+  ANSWER_HOLD_MS,
+  BOT_H,
+  BOT_W,
+  BotSvg,
+  Bubble,
+  Chip,
+  EYE_Y,
+  Flip,
+  HAIR_EDGE,
+  IDLE_THINK_MS,
+  INK,
+  Layer,
+  MARGIN,
+  MESSAGE_MS,
+  MOVE_MS,
+  Mover,
+  Panel,
+  PanelTitle,
+  ROAM_X,
+  ROAM_Y,
+  Robot,
+  SadCard,
+  SadText,
+  SadWrap,
+  SKIN,
+  SUIT_EDGE,
+  THINK_DURATION,
+  TOP_RESERVE,
+  VB_H,
+  VB_W,
+} from './StNutriBot';
 
 type TFn = (key: string, params?: Record<string, string | number>) => string;
 
@@ -31,19 +64,6 @@ interface BotState {
   mood: Mood;
   messages: string[];
 }
-
-const BOT_W = 70;
-const BOT_H = 77;
-const MARGIN = 24;
-const TOP_RESERVE = 110;
-const MOVE_MS = 5200;
-const MESSAGE_MS = 8000;
-const ANSWER_HOLD_MS = 7000;
-const IDLE_THINK_MS = 13000;
-const THINK_DURATION = 2400;
-
-const ROAM_X = 150;
-const ROAM_Y = 220;
 
 interface Question {
   id: string;
@@ -371,8 +391,7 @@ function RoamingBot() {
       : thinking
         ? t('Hmm, let me see...')
         : (answer ?? messages[msgIndex] ?? messages[0]);
-  const bubbleVisible =
-    !panelOpen && (hovered || moved || annoyed || !!answer);
+  const bubbleVisible = !panelOpen && (hovered || moved || annoyed || !!answer);
 
   return (
     <Layer aria-hidden>
@@ -473,99 +492,6 @@ function pick(arr: string[]): string {
 function clamp(v: number, min: number, max: number): number {
   return Math.min(Math.max(v, min), max);
 }
-
-const float = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-`;
-
-const dragWobble = keyframes`
-  0% { transform: rotate(-9deg); }
-  50% { transform: rotate(9deg); }
-  100% { transform: rotate(-9deg); }
-`;
-
-const blink = keyframes`
-  0%, 92%, 100% { transform: scaleY(1); }
-  96% { transform: scaleY(0.1); }
-`;
-
-const Layer = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
-`;
-
-const Mover = styled.div<{ $reduced: boolean; $dragging: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  will-change: transform;
-  transition: ${(p) =>
-    p.$dragging || p.$reduced
-      ? 'none'
-      : 'transform 5.2s cubic-bezier(0.45, 0, 0.25, 1)'};
-`;
-
-const Anchor = styled.div<{ $dragging: boolean }>`
-  position: relative;
-  width: ${BOT_W}px;
-  height: ${BOT_H}px;
-  pointer-events: auto;
-  cursor: ${(p) => (p.$dragging ? 'grabbing' : 'grab')};
-  touch-action: none;
-`;
-
-const Robot = styled.div<{ $still?: boolean; $dragging?: boolean }>`
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  filter: drop-shadow(0 12px 18px rgba(37, 99, 235, 0.35));
-  transform-origin: 50% 12%;
-
-  ${(p) =>
-    p.$dragging
-      ? css`
-          animation: ${dragWobble} 0.45s ease-in-out infinite;
-        `
-      : !p.$still &&
-        css`
-          @media (prefers-reduced-motion: no-preference) {
-            animation: ${float} 3.4s ease-in-out infinite;
-          }
-        `}
-`;
-
-const Flip = styled.div<{ $facingLeft: boolean }>`
-  transform: scaleX(${(p) => (p.$facingLeft ? -1 : 1)});
-  transition: transform 0.3s ease;
-`;
-
-// ----- Chibi character (SVG) -----
-const VB_W = 80;
-const VB_H = 88;
-const EYE_Y = 36.5;
-const SKIN = '#ffe9dc';
-const INK = '#0f172a';
-const HAIR_EDGE = '#c8d2e0';
-const SUIT_EDGE = '#c3cedd';
-
-const BotSvg = styled.svg`
-  display: block;
-  overflow: visible;
-
-  .nb-blink {
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .nb-blink {
-      animation: ${blink} 4.6s ease-in-out infinite;
-    }
-  }
-`;
 
 function star(cx: number, cy: number, r: number): string {
   const m = r * 0.3;
@@ -1093,160 +1019,3 @@ function ChibiBot({ mood, width = BOT_W }: { mood: Mood; width?: number }) {
     </BotSvg>
   );
 }
-
-const Bubble = styled.div<{ $visible: boolean; $left: boolean }>`
-  position: absolute;
-  bottom: calc(100% + 12px);
-  ${(p) => (p.$left ? 'left: 0;' : 'right: 0;')}
-  width: max-content;
-  max-width: 220px;
-  padding: 0.55rem 0.75rem;
-  border-radius: 0.875rem;
-  background: ${colors.white};
-  backdrop-filter: blur(8px);
-  border: 1px solid ${colors.surfaceBorder};
-  box-shadow: 0 12px 30px -12px rgba(15, 23, 42, 0.3);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  line-height: 1.35;
-  color: ${colors.slate700};
-  opacity: ${(p) => (p.$visible ? 1 : 0)};
-  transform: translateY(${(p) => (p.$visible ? '0' : '6px')})
-    scale(${(p) => (p.$visible ? 1 : 0.96)});
-  transform-origin: ${(p) => (p.$left ? 'left bottom' : 'right bottom')};
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-  pointer-events: none;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    ${(p) => (p.$left ? 'left: 18px;' : 'right: 18px;')}
-    border: 6px solid transparent;
-    border-top-color: ${colors.white};
-  }
-`;
-
-const Panel = styled.div<{ $visible: boolean; $left: boolean }>`
-  position: absolute;
-  bottom: calc(100% + 12px);
-  ${(p) => (p.$left ? 'left: 0;' : 'right: 0;')}
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-  padding: 0.625rem;
-  border-radius: 0.875rem;
-  background: ${colors.white};
-  border: 1px solid ${colors.surfaceBorder};
-  box-shadow: 0 16px 36px -14px rgba(15, 23, 42, 0.4);
-  opacity: ${(p) => (p.$visible ? 1 : 0)};
-  transform: translateY(${(p) => (p.$visible ? '0' : '6px')})
-    scale(${(p) => (p.$visible ? 1 : 0.96)});
-  transform-origin: ${(p) => (p.$left ? 'left bottom' : 'right bottom')};
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-  pointer-events: ${(p) => (p.$visible ? 'auto' : 'none')};
-`;
-
-const PanelTitle = styled.div`
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: ${colors.slate500};
-  padding: 0 0.125rem 0.125rem;
-`;
-
-const Chip = styled.button`
-  text-align: left;
-  border: 1px solid ${colors.slate200};
-  background: ${colors.slate50};
-  border-radius: 0.625rem;
-  padding: 0.5rem 0.625rem;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: ${colors.slate700};
-  cursor: pointer;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.08s ease;
-
-  &:hover {
-    background: ${colors.brand50};
-    border-color: ${colors.brand300};
-    color: ${colors.brand700};
-  }
-  &:active {
-    transform: scale(0.98);
-  }
-`;
-
-// ----- Off-state sad box -----
-const SadWrap = styled.div`
-  position: fixed;
-  right: ${MARGIN}px;
-  bottom: ${MARGIN}px;
-  z-index: 40;
-`;
-
-const SadCard = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0;
-  padding: 0.75rem;
-  border-radius: 1rem;
-  background: ${colors.surface};
-  backdrop-filter: blur(8px);
-  border: 1px solid ${colors.surfaceBorder};
-  box-shadow: 0 14px 32px -14px rgba(15, 23, 42, 0.4);
-  cursor: pointer;
-  font-family: inherit;
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 40px -14px rgba(15, 23, 42, 0.5);
-  }
-  &:active {
-    transform: translateY(0) scale(0.99);
-  }
-`;
-
-const SadText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 0;
-  margin-left: 0;
-  opacity: 0;
-  transition:
-    max-width 0.28s ease,
-    margin-left 0.28s ease,
-    opacity 0.2s ease;
-
-  ${SadCard}:hover &,
-  ${SadCard}:focus-visible & {
-    max-width: 220px;
-    margin-left: 0.75rem;
-    opacity: 1;
-  }
-
-  & strong {
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: ${colors.slate700};
-  }
-  & span {
-    font-size: 0.75rem;
-    color: ${colors.slate500};
-  }
-`;

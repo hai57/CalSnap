@@ -92,8 +92,7 @@ const VI: Record<string, string> = {
   'Start tracking with AI in seconds':
     'Bắt đầu theo dõi bằng AI trong vài giây',
   'At least 6 characters': 'Ít nhất 6 ký tự',
-  'Password must be at least 6 characters':
-    'Mật khẩu phải có ít nhất 6 ký tự',
+  'Password must be at least 6 characters': 'Mật khẩu phải có ít nhất 6 ký tự',
   'Registration failed': 'Đăng ký thất bại',
   'Already have an account?': 'Đã có tài khoản?',
 
@@ -169,8 +168,7 @@ const VI: Record<string, string> = {
   'Calorie goal reached today!': 'Đạt mục tiêu calo hôm nay!',
   'Great, right on target!': 'Tuyệt vời, vừa đủ!',
   '{over} kcal over your goal.': 'Vượt {over} kcal so với mục tiêu.',
-  'A bit too much, balance it tomorrow!':
-    'Hơi quá tay, mai cân bằng lại nha!',
+  'A bit too much, balance it tomorrow!': 'Hơi quá tay, mai cân bằng lại nha!',
   "I don't know your goal yet. Set one in Profile!":
     'Mình chưa biết mục tiêu của bạn. Đặt mục tiêu ở Profile nhé!',
   'You are {over} kcal over your goal.':
@@ -197,6 +195,7 @@ const VI: Record<string, string> = {
   'Ask NutriBot': 'Hỏi NutriBot',
   'NutriBot is sleeping': 'NutriBot đang ngủ',
   'Tap again to wake': 'Bấm lần nữa để đánh thức',
+  'Tap to wake me up': 'Bấm để đánh thức mình dậy',
 };
 
 type Params = Record<string, string | number>;
