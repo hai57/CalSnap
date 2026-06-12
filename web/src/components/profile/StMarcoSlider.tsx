@@ -13,8 +13,19 @@ export const MacroRow = styled.div`
 `;
 
 export const MacroStats = styled.span`
-  color: ${colors.slate500};
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
   font-variant-numeric: tabular-nums;
+`;
+
+export const MacroGrams = styled.span`
+  font-weight: 600;
+  color: ${colors.slate700};
+`;
+
+export const MacroPct = styled.span`
+  color: ${colors.slate400};
 `;
 
 export const MacroHead = styled.div`

@@ -11,4 +11,9 @@ export const colors = {
   protein: "#3b82f6",
   carbs: "#f59e0b",
   fat: "#ef4444",
+  blue: "#2563eb",
+  blueDark: "#1d4ed8",
+  blueLight: "#dbeafe",
+  blueSoft: "#eff6ff",
+  chipBg: "#f1f5f9",
 };

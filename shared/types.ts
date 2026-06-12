@@ -1,6 +1,6 @@
 // Shared API types. Mirrors the Pydantic schemas in backend/app/schemas.py.
 
-export type Source = "photo" | "text";
+export type Source = 'photo' | 'text';
 
 export interface User {
   id: number;
@@ -69,16 +69,16 @@ export interface DailyGoal {
 }
 
 export type DietMode =
-  | "balanced"
-  | "low_carb"
-  | "low_fat"
-  | "high_protein"
-  | "keto"
-  | "vegetarian";
+  | 'balanced'
+  | 'low_carb'
+  | 'low_fat'
+  | 'high_protein'
+  | 'keto'
+  | 'vegetarian';
 
-export type WeightUnit = "kg" | "lb";
+export type WeightUnit = 'kg' | 'lb';
 
-export interface UserSettings {
+export interface UserProfile {
   weight_kg: number;
   weight_unit: WeightUnit;
   diet_mode: DietMode;

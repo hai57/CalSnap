@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import Base, engine
-from app.routers import analyze, auth, entries, settings as settings_router, summary
+from app.routers import analyze, auth, entries, profile as profile_router, summary
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -62,7 +62,7 @@ app.include_router(auth.router)
 app.include_router(analyze.router)
 app.include_router(entries.router)
 app.include_router(summary.router)
-app.include_router(settings_router.router)
+app.include_router(profile_router.router)
 
 # Serve uploaded images (local dev storage).
 os.makedirs(settings.upload_dir, exist_ok=True)

@@ -1,6 +1,8 @@
 import {
+  MacroGrams,
   MacroHead,
   MacroName,
+  MacroPct,
   MacroRow,
   MacroStats,
   Range,
@@ -10,7 +12,6 @@ export function MacroSlider({
   color,
   grams,
   pct,
-  kcal,
   max,
   onChange,
 }: {
@@ -18,7 +19,6 @@ export function MacroSlider({
   color: string;
   grams: number;
   pct: number;
-  kcal: number;
   max: number;
   onChange: (v: number) => void;
 }) {
@@ -28,7 +28,8 @@ export function MacroSlider({
       <MacroHead>
         <MacroName $color={color}>{label}</MacroName>
         <MacroStats>
-          {pct}% · {grams} g · {Math.round(kcal)} kcal
+          <MacroGrams>{grams} g</MacroGrams>
+          <MacroPct>{pct}%</MacroPct>
         </MacroStats>
       </MacroHead>
       <Range

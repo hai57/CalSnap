@@ -104,7 +104,7 @@ class DailyGoalOut(BaseModel):
 DietMode = Literal["balanced", "low_carb", "low_fat", "high_protein", "keto", "vegetarian"]
 
 
-class UserSettingsIn(BaseModel):
+class UserProfileIn(BaseModel):
     weight_kg: float = Field(ge=0, le=1000)
     weight_unit: Literal["kg", "lb"] = "kg"
     diet_mode: DietMode = "balanced"
@@ -112,7 +112,7 @@ class UserSettingsIn(BaseModel):
     water_ml: int = Field(ge=0, le=10000)
 
 
-class UserSettingsOut(BaseModel):
+class UserProfileOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     weight_kg: float

@@ -19,7 +19,7 @@ import {
 const navItems = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/history', label: 'Progress' },
-  { to: '/settings', label: 'Settings' },
+  { to: '/profile', label: 'Profile' },
 ];
 
 const Shell = styled.div`

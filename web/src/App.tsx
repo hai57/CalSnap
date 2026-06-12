@@ -1,17 +1,17 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import styled from "styled-components";
+import { Navigate, Route, Routes } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { Layout } from "./components/Layout";
-import { useAuth } from "./auth/AuthContext";
-import type { ReactNode } from "react";
-import { AddEntry } from "./pages/AddEntry";
-import { Dashboard } from "./pages/Dashboard";
-import { Goals } from "./pages/Goals";
-import { History } from "./pages/History";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import { Settings } from "./pages/Settings";
-import { colors } from "./styles/theme";
+import { Layout } from './components/Layout';
+import { useAuth } from './auth/AuthContext';
+import type { ReactNode } from 'react';
+import { AddEntry } from './pages/AddEntry';
+import { Dashboard } from './pages/Dashboard';
+import { Goals } from './pages/Goals';
+import { History } from './pages/History';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { Profile } from './pages/Profile';
+import { colors } from './styles/theme';
 
 const FullScreenCenter = styled.div`
   display: flex;
@@ -89,10 +89,10 @@ export default function App() {
         }
       />
       <Route
-        path="/settings"
+        path="/profile"
         element={
           <Protected>
-            <Settings />
+            <Profile />
           </Protected>
         }
       />

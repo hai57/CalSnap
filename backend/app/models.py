@@ -24,7 +24,7 @@ class User(Base):
     goal: Mapped["DailyGoal | None"] = relationship(
         back_populates="user", cascade="all, delete-orphan", uselist=False
     )
-    settings: Mapped["UserSettings | None"] = relationship(
+    profile: Mapped["UserProfile | None"] = relationship(
         back_populates="user", cascade="all, delete-orphan", uselist=False
     )
 
@@ -62,8 +62,8 @@ class DailyGoal(Base):
     user: Mapped["User"] = relationship(back_populates="goal")
 
 
-class UserSettings(Base):
-    __tablename__ = "user_settings"
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
     weight_kg: Mapped[float] = mapped_column(Float, default=70.0)
@@ -72,4 +72,4 @@ class UserSettings(Base):
     steps_target: Mapped[int] = mapped_column(Integer, default=8000)
     water_ml: Mapped[int] = mapped_column(Integer, default=2000)
 
-    user: Mapped["User"] = relationship(back_populates="settings")
+    user: Mapped["User"] = relationship(back_populates="profile")

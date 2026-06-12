@@ -1,19 +1,19 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StatusBar } from 'expo-status-bar';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { AuthProvider, useAuth } from "./src/auth";
-import { colors } from "./src/theme";
-import { AddScreen } from "./src/screens/AddScreen";
-import { DashboardScreen } from "./src/screens/DashboardScreen";
-import { GoalsScreen } from "./src/screens/GoalsScreen";
-import { HistoryScreen } from "./src/screens/HistoryScreen";
-import { LoginScreen } from "./src/screens/LoginScreen";
-import { RegisterScreen } from "./src/screens/RegisterScreen";
-import { SettingsScreen } from "./src/screens/SettingsScreen";
+import { AuthProvider, useAuth } from './src/auth';
+import { colors } from './src/theme';
+import { AddScreen } from './src/screens/AddScreen';
+import { DashboardScreen } from './src/screens/DashboardScreen';
+import { GoalsScreen } from './src/screens/GoalsScreen';
+import { HistoryScreen } from './src/screens/HistoryScreen';
+import { LoginScreen } from './src/screens/LoginScreen';
+import { RegisterScreen } from './src/screens/RegisterScreen';
+import { ProfileScreen } from './src/screens/ProfileScreen';
 
 const AuthStack = createNativeStackNavigator();
 const AppStack = createNativeStackNavigator();
@@ -37,7 +37,7 @@ function AddFoodButton({ onPress }: { onPress: () => void }) {
         marginRight: 12,
       })}
     >
-      <Text style={{ color: "#fff", fontWeight: "700" }}>+ Add food</Text>
+      <Text style={{ color: '#fff', fontWeight: '700' }}>+ Add food</Text>
     </Pressable>
   );
 }
@@ -48,28 +48,34 @@ function AppTabs() {
       screenOptions={({ navigation }) => ({
         headerStyle: { backgroundColor: colors.bg },
         headerShadowVisible: false,
-        headerTitleStyle: { fontWeight: "700" },
+        headerTitleStyle: { fontWeight: '700' },
         tabBarActiveTintColor: colors.brandDark,
         tabBarInactiveTintColor: colors.muted,
         headerRight: () => (
-          <AddFoodButton onPress={() => navigation.navigate("Add")} />
+          <AddFoodButton onPress={() => navigation.navigate('Add')} />
         ),
       })}
     >
       <Tabs.Screen
         name="Today"
         component={DashboardScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon label="🏠" focused={focused} /> }}
+        options={{
+          tabBarIcon: ({ focused }) => <TabIcon label="🏠" focused={focused} />,
+        }}
       />
       <Tabs.Screen
         name="Progress"
         component={HistoryScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon label="📊" focused={focused} /> }}
+        options={{
+          tabBarIcon: ({ focused }) => <TabIcon label="📊" focused={focused} />,
+        }}
       />
       <Tabs.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon label="⚙️" focused={focused} /> }}
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) => <TabIcon label="⚙️" focused={focused} />,
+        }}
       />
     </Tabs.Navigator>
   );
@@ -81,13 +87,25 @@ function AppNavigator() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.bg },
         headerShadowVisible: false,
-        headerTitleStyle: { fontWeight: "700" },
+        headerTitleStyle: { fontWeight: '700' },
         headerTintColor: colors.text,
       }}
     >
-      <AppStack.Screen name="Main" component={AppTabs} options={{ headerShown: false }} />
-      <AppStack.Screen name="Add" component={AddScreen} options={{ title: "Add food" }} />
-      <AppStack.Screen name="Goals" component={GoalsScreen} options={{ title: "Daily goals" }} />
+      <AppStack.Screen
+        name="Main"
+        component={AppTabs}
+        options={{ headerShown: false }}
+      />
+      <AppStack.Screen
+        name="Add"
+        component={AddScreen}
+        options={{ title: 'Add food' }}
+      />
+      <AppStack.Screen
+        name="Goals"
+        component={GoalsScreen}
+        options={{ title: 'Daily goals' }}
+      />
     </AppStack.Navigator>
   );
 }
@@ -97,7 +115,14 @@ function Root() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.bg }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.bg,
+        }}
+      >
         <ActivityIndicator size="large" color={colors.brand} />
       </View>
     );

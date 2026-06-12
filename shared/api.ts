@@ -11,8 +11,8 @@ import type {
   FoodEntryUpdate,
   Token,
   User,
-  UserSettings,
-} from "./types";
+  UserProfile,
+} from './types';
 
 export interface ApiClientOptions {
   baseUrl: string;
@@ -26,7 +26,7 @@ export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
     super(message);
-    this.name = "ApiError";
+    this.name = 'ApiError';
     this.status = status;
   }
 }
@@ -37,9 +37,12 @@ export class ApiClient {
   private async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const token = await this.opts.getToken();
     const headers = new Headers(init.headers);
-    if (token) headers.set("Authorization", `Bearer ${token}`);
+    if (token) headers.set('Authorization', `Bearer ${token}`);
 
-    const res = await fetch(`${this.opts.baseUrl}${path}`, { ...init, headers });
+    const res = await fetch(`${this.opts.baseUrl}${path}`, {
+      ...init,
+      headers,
+    });
 
     if (res.status === 401) {
       this.opts.onUnauthorized?.();
@@ -53,8 +56,12 @@ export class ApiClient {
 
     if (!res.ok) {
       const detail =
-        (data && (data.detail || data.message)) || `Request failed (${res.status})`;
-      throw new ApiError(res.status, typeof detail === "string" ? detail : JSON.stringify(detail));
+        (data && (data.detail || data.message)) ||
+        `Request failed (${res.status})`;
+      throw new ApiError(
+        res.status,
+        typeof detail === 'string' ? detail : JSON.stringify(detail),
+      );
     }
     return data as T;
   }
@@ -62,84 +69,86 @@ export class ApiClient {
   private json<T>(path: string, method: string, body?: unknown): Promise<T> {
     return this.request<T>(path, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
   }
 
   // ---------- Auth ----------
   async register(email: string, password: string): Promise<Token> {
-    return this.json<Token>("/api/auth/register", "POST", { email, password });
+    return this.json<Token>('/api/auth/register', 'POST', { email, password });
   }
 
   async login(email: string, password: string): Promise<Token> {
     // OAuth2 password flow expects form-encoded "username"/"password".
     // Encoded manually so this works in React Native too.
     const body = `username=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-    return this.request<Token>("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    return this.request<Token>('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body,
     });
   }
 
   me(): Promise<User> {
-    return this.request<User>("/api/auth/me");
+    return this.request<User>('/api/auth/me');
   }
 
   // ---------- Analyze ----------
   analyzeText(description: string): Promise<AnalyzeResult> {
-    return this.json<AnalyzeResult>("/api/analyze/text", "POST", { description });
+    return this.json<AnalyzeResult>('/api/analyze/text', 'POST', {
+      description,
+    });
   }
 
   // `form` must contain a "file" field. Each platform builds it differently:
   //   web:    form.append("file", fileBlob)
   //   native: form.append("file", { uri, name, type } as any)
   analyzeImage(form: FormData): Promise<AnalyzeResult> {
-    return this.request<AnalyzeResult>("/api/analyze/image", {
-      method: "POST",
+    return this.request<AnalyzeResult>('/api/analyze/image', {
+      method: 'POST',
       body: form,
     });
   }
 
   // ---------- Entries ----------
   createEntry(payload: FoodEntryCreate): Promise<FoodEntry> {
-    return this.json<FoodEntry>("/api/entries", "POST", payload);
+    return this.json<FoodEntry>('/api/entries', 'POST', payload);
   }
 
   listEntries(day?: string): Promise<FoodEntry[]> {
-    const q = day ? `?day=${encodeURIComponent(day)}` : "";
+    const q = day ? `?day=${encodeURIComponent(day)}` : '';
     return this.request<FoodEntry[]>(`/api/entries${q}`);
   }
 
   updateEntry(id: number, payload: FoodEntryUpdate): Promise<FoodEntry> {
-    return this.json<FoodEntry>(`/api/entries/${id}`, "PATCH", payload);
+    return this.json<FoodEntry>(`/api/entries/${id}`, 'PATCH', payload);
   }
 
   deleteEntry(id: number): Promise<void> {
-    return this.request<void>(`/api/entries/${id}`, { method: "DELETE" });
+    return this.request<void>(`/api/entries/${id}`, { method: 'DELETE' });
   }
 
   // ---------- Summary & goals ----------
   summary(day?: string): Promise<DailySummary> {
-    const q = day ? `?day=${encodeURIComponent(day)}` : "";
+    const q = day ? `?day=${encodeURIComponent(day)}` : '';
     return this.request<DailySummary>(`/api/summary${q}`);
   }
 
   getGoal(): Promise<DailyGoal | null> {
-    return this.request<DailyGoal | null>("/api/goal");
+    return this.request<DailyGoal | null>('/api/goal');
   }
 
   setGoal(goal: DailyGoal): Promise<DailyGoal> {
-    return this.json<DailyGoal>("/api/goal", "PUT", goal);
+    return this.json<DailyGoal>('/api/goal', 'PUT', goal);
   }
 
   // ---------- Settings ----------
-  getSettings(): Promise<UserSettings> {
-    return this.request<UserSettings>("/api/settings");
+  getProfile(): Promise<UserProfile> {
+    return this.request<UserProfile>('/api/profile');
   }
 
-  setSettings(settings: UserSettings): Promise<UserSettings> {
-    return this.json<UserSettings>("/api/settings", "PUT", settings);
+  setProfile(profile: UserProfile): Promise<UserProfile> {
+    return this.json<UserProfile>('/api/profile', 'PUT', profile);
   }
 }
