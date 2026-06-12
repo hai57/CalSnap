@@ -3,10 +3,12 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } fro
 
 import { useAuth } from "../auth";
 import { Field, PrimaryButton } from "../components";
+import { useLang } from "../i18n";
 import { colors } from "../theme";
 
 export function LoginScreen({ navigation }: { navigation: any }) {
   const { login } = useAuth();
+  const { t } = useLang();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +20,7 @@ export function LoginScreen({ navigation }: { navigation: any }) {
     try {
       await login(email.trim(), password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : t("Login failed"));
     } finally {
       setBusy(false);
     }
@@ -45,11 +47,11 @@ export function LoginScreen({ navigation }: { navigation: any }) {
             <Text style={{ color: "#fff", fontSize: 28, fontWeight: "800" }}>N</Text>
           </View>
           <Text style={{ fontSize: 26, fontWeight: "800", color: colors.text }}>NutriLens</Text>
-          <Text style={{ color: colors.muted, marginTop: 4 }}>Log in to track your calories</Text>
+          <Text style={{ color: colors.muted, marginTop: 4 }}>{t("Log in to track your calories")}</Text>
         </View>
 
         <Field
-          label="Email"
+          label={t("Email")}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -58,7 +60,7 @@ export function LoginScreen({ navigation }: { navigation: any }) {
           editable={!busy}
         />
         <Field
-          label="Password"
+          label={t("Password")}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -66,7 +68,7 @@ export function LoginScreen({ navigation }: { navigation: any }) {
           editable={!busy}
         />
         {error && <Text style={{ color: colors.danger, marginBottom: 12 }}>{error}</Text>}
-        <PrimaryButton title="Log in" onPress={submit} loading={busy} />
+        <PrimaryButton title={t("Log in")} onPress={submit} loading={busy} />
 
         <Pressable
           onPress={() => navigation.navigate("Register")}
@@ -74,7 +76,7 @@ export function LoginScreen({ navigation }: { navigation: any }) {
           style={{ marginTop: 20, opacity: busy ? 0.5 : 1 }}
         >
           <Text style={{ textAlign: "center", color: colors.muted }}>
-            No account? <Text style={{ color: colors.brandDark, fontWeight: "700" }}>Sign up</Text>
+            {t("No account?")} <Text style={{ color: colors.brandDark, fontWeight: "700" }}>{t("Sign up")}</Text>
           </Text>
         </Pressable>
       </ScrollView>

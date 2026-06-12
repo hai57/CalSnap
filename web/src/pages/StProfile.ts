@@ -266,7 +266,7 @@ export const Segment = styled.button<{ $active: boolean }>`
   flex: 1;
   border: none;
   background: ${(p) => (p.$active ? colors.brand500 : colors.white)};
-  color: ${(p) => (p.$active ? colors.white : colors.slate600)};
+  color: ${(p) => (p.$active ? colors.onAccent : colors.slate600)};
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -464,6 +464,110 @@ export const WaterOption = styled.button<{ $active: boolean }>`
 
   &:active {
     transform: scale(0.97);
+  }
+`;
+
+// ----- Appearance row -----
+export const AppearanceRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  @media (max-width: 420px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+export const Switch = styled.button<{ $on: boolean }>`
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid ${(p) => (p.$on ? colors.brand500 : colors.slate300)};
+  background: ${(p) => (p.$on ? colors.brand500 : colors.slate200)};
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: ${(p) => (p.$on ? '22px' : '2px')};
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: left 0.2s ease;
+  }
+`;
+
+// ----- Account actions (footer) -----
+export const AccountActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+`;
+
+export const GhostButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid ${colors.slate200};
+  background: ${colors.white};
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: ${colors.slate700};
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.2s ease,
+    transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    background: ${colors.slate50};
+    border-color: ${colors.slate300};
+    color: ${colors.slate900};
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px -10px rgba(15, 23, 42, 0.35);
+  }
+  &:active {
+    transform: translateY(0) scale(0.99);
+    box-shadow: none;
+  }
+  &:focus-visible {
+    outline: none;
+    border-color: ${colors.slate400};
+    box-shadow: 0 0 0 3px ${colors.slate200};
+  }
+`;
+
+export const DangerButton = styled(GhostButton)`
+  color: ${colors.red500};
+  border-color: ${colors.red100};
+  background: ${colors.red50};
+
+  &:hover {
+    background: ${colors.red100};
+    border-color: ${colors.red200};
+    color: ${colors.red500};
+    box-shadow: 0 8px 18px -10px rgba(239, 68, 68, 0.45);
+  }
+  &:focus-visible {
+    border-color: ${colors.red200};
+    box-shadow: 0 0 0 3px ${colors.red100};
   }
 `;
 

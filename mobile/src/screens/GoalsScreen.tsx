@@ -1,12 +1,14 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { Alert, ScrollView, Text } from "react-native";
+import { ScrollView, Text } from "react-native";
 
 import type { DailyGoal } from "@shared/types";
 
 import { api } from "../api";
 import { Card, Field, PrimaryButton } from "../components";
+import { useLang } from "../i18n";
 import { colors } from "../theme";
+import { useToast } from "../toast";
 
 const DEFAULTS: DailyGoal = {
   calorie_target: 2000,
@@ -23,6 +25,8 @@ export function GoalsScreen() {
     fat_target: String(DEFAULTS.fat_target),
   });
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
+  const { t } = useLang();
 
   const load = useCallback(async () => {
     const g = await api.getGoal().catch(() => null);
@@ -51,9 +55,9 @@ export function GoalsScreen() {
         carb_target: Number(form.carb_target) || 0,
         fat_target: Number(form.fat_target) || 0,
       });
-      Alert.alert("Saved", "Your daily goals were updated.");
+      toast.success(t("Daily goals updated"));
     } catch (err) {
-      Alert.alert("Could not save", err instanceof Error ? err.message : "Try again");
+      toast.error(err instanceof Error ? err.message : t("Could not save"));
     } finally {
       setBusy(false);
     }
@@ -66,33 +70,33 @@ export function GoalsScreen() {
     >
       <Card>
         <Text style={{ fontSize: 16, fontWeight: "700", color: colors.text, marginBottom: 16 }}>
-          Daily targets
+          {t("Daily targets")}
         </Text>
         <Field
-          label="Calories (kcal)"
+          label={t("Calories (kcal)")}
           value={form.calorie_target}
           onChangeText={(v) => setForm((f) => ({ ...f, calorie_target: v }))}
           keyboardType="numeric"
         />
         <Field
-          label="Protein (g)"
+          label={t("Protein (g)")}
           value={form.protein_target}
           onChangeText={(v) => setForm((f) => ({ ...f, protein_target: v }))}
           keyboardType="numeric"
         />
         <Field
-          label="Carbs (g)"
+          label={t("Carbs (g)")}
           value={form.carb_target}
           onChangeText={(v) => setForm((f) => ({ ...f, carb_target: v }))}
           keyboardType="numeric"
         />
         <Field
-          label="Fat (g)"
+          label={t("Fat (g)")}
           value={form.fat_target}
           onChangeText={(v) => setForm((f) => ({ ...f, fat_target: v }))}
           keyboardType="numeric"
         />
-        <PrimaryButton title="Save goals" onPress={save} loading={busy} />
+        <PrimaryButton title={t("Save goals")} onPress={save} loading={busy} />
       </Card>
     </ScrollView>
   );

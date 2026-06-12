@@ -5,6 +5,10 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
 import { AuthProvider } from "./auth/AuthContext";
+import { BotProvider } from "./bot/BotContext";
+import { ToastProvider } from "./components/Toast";
+import { ThemeProvider } from "./theme/ThemeContext";
+import { LanguageProvider } from "./i18n";
 import { Background } from "./styles/Background";
 import { GlobalStyle } from "./styles/global";
 
@@ -14,14 +18,22 @@ const queryClient = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <GlobalStyle />
-    <Background />
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <GlobalStyle />
+        <Background />
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ToastProvider>
+              <BotProvider>
+                <AuthProvider>
+                  <App />
+                </AuthProvider>
+              </BotProvider>
+            </ToastProvider>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   </React.StrictMode>,
 );

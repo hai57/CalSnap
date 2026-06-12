@@ -7,11 +7,14 @@ import type { AnalyzeResult } from "@shared/types";
 import { api } from "../api";
 import { Card, Field, PrimaryButton } from "../components";
 import { resolveImageUrl } from "../config";
+import { useLang } from "../i18n";
 import { colors } from "../theme";
+import { useToast } from "../toast";
 
 type Mode = "photo" | "text";
 
 export function AddScreen({ navigation }: { navigation: any }) {
+  const { t } = useLang();
   const [mode, setMode] = useState<Mode>("photo");
   const [result, setResult] = useState<AnalyzeResult | null>(null);
 
@@ -34,8 +37,8 @@ export function AddScreen({ navigation }: { navigation: any }) {
       contentContainerStyle={{ padding: 16, gap: 16 }}
     >
       <View style={{ flexDirection: "row", gap: 10 }}>
-        <Tab label="📷 Photo" active={mode === "photo"} onPress={() => setMode("photo")} />
-        <Tab label="✍️ Describe" active={mode === "text"} onPress={() => setMode("text")} />
+        <Tab label={t("📷 Photo")} active={mode === "photo"} onPress={() => setMode("photo")} />
+        <Tab label={t("✍️ Describe")} active={mode === "text"} onPress={() => setMode("text")} />
       </View>
       {mode === "photo" ? <PhotoMode onResult={setResult} /> : <TextMode onResult={setResult} />}
     </ScrollView>
@@ -53,7 +56,7 @@ function Tab({ label, active, onPress }: { label: string; active: boolean; onPre
         borderWidth: 1,
         alignItems: "center",
         borderColor: active ? colors.brand : colors.border,
-        backgroundColor: active ? colors.brandLight : "#fff",
+        backgroundColor: active ? colors.brandLight : colors.card,
       }}
     >
       <Text style={{ fontWeight: "600", color: active ? colors.brandDark : colors.muted }}>
@@ -64,15 +67,17 @@ function Tab({ label, active, onPress }: { label: string; active: boolean; onPre
 }
 
 function PhotoMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
+  const { t } = useLang();
   const [asset, setAsset] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   async function pick(useCamera: boolean) {
     const perm = useCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert("Permission needed", "Please allow access to continue.");
+      Alert.alert(t("Permission needed"), t("Please allow access to continue."));
       return;
     }
     const res = useCamera
@@ -92,7 +97,7 @@ function PhotoMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
       form.append("file", { uri: asset.uri, name, type } as any);
       onResult(await api.analyzeImage(form));
     } catch (err) {
-      Alert.alert("Analysis failed", err instanceof Error ? err.message : "Try again");
+      toast.error(err instanceof Error ? err.message : t("Analysis failed"));
     } finally {
       setBusy(false);
     }
@@ -119,19 +124,19 @@ function PhotoMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
           }}
         >
           <Text style={{ fontSize: 36 }}>📷</Text>
-          <Text style={{ color: colors.muted, marginTop: 6 }}>No photo selected</Text>
+          <Text style={{ color: colors.muted, marginTop: 6 }}>{t("No photo selected")}</Text>
         </View>
       )}
       <View style={{ flexDirection: "row", gap: 10 }}>
         <View style={{ flex: 1 }}>
-          <PrimaryButton title="Camera" onPress={() => pick(true)} />
+          <PrimaryButton title={t("Camera")} onPress={() => pick(true)} />
         </View>
         <View style={{ flex: 1 }}>
-          <PrimaryButton title="Library" onPress={() => pick(false)} />
+          <PrimaryButton title={t("Library")} onPress={() => pick(false)} />
         </View>
       </View>
       <PrimaryButton
-        title="Analyze photo"
+        title={t("Analyze photo")}
         onPress={analyze}
         loading={busy}
         disabled={!asset}
@@ -141,8 +146,10 @@ function PhotoMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
 }
 
 function TextMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
+  const { t } = useLang();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   async function analyze() {
     if (!text.trim()) return;
@@ -150,7 +157,7 @@ function TextMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
     try {
       onResult(await api.analyzeText(text.trim()));
     } catch (err) {
-      Alert.alert("Analysis failed", err instanceof Error ? err.message : "Try again");
+      toast.error(err instanceof Error ? err.message : t("Analysis failed"));
     } finally {
       setBusy(false);
     }
@@ -159,12 +166,12 @@ function TextMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
   return (
     <Card style={{ gap: 6 }}>
       <Field
-        label="Describe your meal"
+        label={t("Describe your meal")}
         value={text}
         onChangeText={setText}
         multiline
         numberOfLines={4}
-        placeholder="e.g. Grilled chicken breast with rice and steamed broccoli"
+        placeholder={t("e.g. Grilled chicken breast with rice and steamed broccoli")}
         style={{
           borderWidth: 1,
           borderColor: colors.border,
@@ -177,7 +184,7 @@ function TextMode({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
         }}
       />
       <PrimaryButton
-        title="Estimate calories"
+        title={t("Estimate calories")}
         onPress={analyze}
         loading={busy}
         disabled={!text.trim()}
@@ -203,6 +210,8 @@ function Confirm({
     fat: String(Math.round(result.fat)),
   });
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
+  const { t } = useLang();
   const img = resolveImageUrl(result.image_url);
 
   async function save() {
@@ -218,9 +227,10 @@ function Confirm({
         image_url: result.image_url,
         confidence: result.confidence,
       });
+      toast.success(t("{name} added", { name: form.name }));
       onSaved();
     } catch (err) {
-      Alert.alert("Could not save", err instanceof Error ? err.message : "Try again");
+      toast.error(err instanceof Error ? err.message : t("Could not save"));
       setBusy(false);
     }
   }
@@ -233,11 +243,11 @@ function Confirm({
       <Card style={{ gap: 4 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
           <View style={{ backgroundColor: colors.brandLight, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 999 }}>
-            <Text style={{ color: colors.brandDark, fontSize: 12, fontWeight: "700" }}>AI estimate</Text>
+            <Text style={{ color: colors.brandDark, fontSize: 12, fontWeight: "700" }}>{t("AI estimate")}</Text>
           </View>
           {result.confidence != null && (
             <Text style={{ color: colors.muted, fontSize: 12 }}>
-              {Math.round(result.confidence * 100)}% confidence
+              {t("{pct}% confidence", { pct: Math.round(result.confidence * 100) })}
             </Text>
           )}
         </View>
@@ -250,14 +260,14 @@ function Confirm({
           />
         )}
 
-        <Field label="Food" value={form.name} onChangeText={(v) => setForm((f) => ({ ...f, name: v }))} />
+        <Field label={t("Food")} value={form.name} onChangeText={(v) => setForm((f) => ({ ...f, name: v }))} />
         <Row>
-          <NumField label="Calories" value={form.calories} onChange={(v) => setForm((f) => ({ ...f, calories: v }))} />
-          <NumField label="Protein (g)" value={form.protein} onChange={(v) => setForm((f) => ({ ...f, protein: v }))} />
+          <NumField label={t("Calories")} value={form.calories} onChange={(v) => setForm((f) => ({ ...f, calories: v }))} />
+          <NumField label={t("Protein (g)")} value={form.protein} onChange={(v) => setForm((f) => ({ ...f, protein: v }))} />
         </Row>
         <Row>
-          <NumField label="Carbs (g)" value={form.carbs} onChange={(v) => setForm((f) => ({ ...f, carbs: v }))} />
-          <NumField label="Fat (g)" value={form.fat} onChange={(v) => setForm((f) => ({ ...f, fat: v }))} />
+          <NumField label={t("Carbs (g)")} value={form.carbs} onChange={(v) => setForm((f) => ({ ...f, carbs: v }))} />
+          <NumField label={t("Fat (g)")} value={form.fat} onChange={(v) => setForm((f) => ({ ...f, fat: v }))} />
         </Row>
 
         <View style={{ flexDirection: "row", gap: 10, marginTop: 6 }}>
@@ -272,10 +282,10 @@ function Confirm({
               alignItems: "center",
             }}
           >
-            <Text style={{ color: colors.muted, fontWeight: "600" }}>Back</Text>
+            <Text style={{ color: colors.muted, fontWeight: "600" }}>{t("Back")}</Text>
           </Pressable>
           <View style={{ flex: 1 }}>
-            <PrimaryButton title="Save entry" onPress={save} loading={busy} />
+            <PrimaryButton title={t("Save entry")} onPress={save} loading={busy} />
           </View>
         </View>
       </Card>

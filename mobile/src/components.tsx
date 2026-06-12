@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Pressable,
-  StyleSheet,
   Text,
   TextInput,
   View,
@@ -13,7 +12,24 @@ import { colors } from "./theme";
 
 export function Card({ style, children, ...rest }: ViewProps) {
   return (
-    <View style={[styles.card, style]} {...rest}>
+    <View
+      style={[
+        {
+          backgroundColor: colors.card,
+          borderRadius: 16,
+          padding: 18,
+          borderWidth: 1,
+          borderColor: colors.border,
+          shadowColor: "#0f172a",
+          shadowOpacity: 0.06,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: 8 },
+          elevation: 2,
+        },
+        style,
+      ]}
+      {...rest}
+    >
       {children}
     </View>
   );
@@ -35,16 +51,21 @@ export function PrimaryButton({
     <Pressable
       onPress={onPress}
       disabled={off}
-      style={({ pressed }) => [
-        styles.button,
-        off && styles.buttonDisabled,
-        pressed && !off && styles.buttonPressed,
-      ]}
+      style={({ pressed }) => ({
+        backgroundColor: pressed && !off ? colors.brandDark : colors.brand,
+        paddingVertical: 14,
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: off ? 0.5 : 1,
+      })}
     >
       {loading ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <Text style={styles.buttonText}>{title}</Text>
+        <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>
+          {title}
+        </Text>
       )}
     </Pressable>
   );
@@ -57,52 +78,31 @@ export function Field({
   const disabled = rest.editable === false;
   return (
     <View style={{ marginBottom: 14 }}>
-      <Text style={styles.label}>{label}</Text>
+      <Text
+        style={{
+          fontSize: 13,
+          fontWeight: "600",
+          color: colors.muted,
+          marginBottom: 6,
+        }}
+      >
+        {label}
+      </Text>
       <TextInput
         placeholderTextColor={colors.muted}
-        style={[styles.input, disabled && styles.inputDisabled]}
+        style={{
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: 12,
+          paddingHorizontal: 14,
+          paddingVertical: 12,
+          fontSize: 16,
+          color: colors.text,
+          backgroundColor: colors.card,
+          opacity: disabled ? 0.5 : 1,
+        }}
         {...rest}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: colors.border,
-    shadowColor: "#0f172a",
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
-  },
-  button: {
-    backgroundColor: colors.brand,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonPressed: { backgroundColor: colors.brandDark },
-  buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 },
-  label: { fontSize: 13, fontWeight: "600", color: colors.muted, marginBottom: 6 },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: colors.text,
-    backgroundColor: "#fff",
-  },
-  inputDisabled: {
-    opacity: 0.5,
-    backgroundColor: colors.bg,
-  },
-});

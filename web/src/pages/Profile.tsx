@@ -17,6 +17,10 @@ import {
 } from '@shared/nutrition';
 
 import { api } from '../lib/api';
+import { useBot } from '../bot/BotContext';
+import { useLang, LanguageToggle } from '../i18n';
+import { useToast } from '../components/Toast';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { useHeaderAction } from '@src/components/LayoutAction';
 import {
   ActivityIcon,
@@ -32,6 +36,8 @@ import {
 import type { SVGProps } from 'react';
 import {
   AnimatedCard,
+  AppearanceRow,
+  Switch,
   DietDesc,
   DietGrid,
   DietHead,
@@ -112,6 +118,9 @@ function round1(n: number): number {
 
 export function Profile() {
   const qc = useQueryClient();
+  const toast = useToast();
+  const { t } = useLang();
+  const { enabled: botEnabled, setEnabled: setBotEnabled } = useBot();
   const goalQuery = useQuery<DailyGoal | null>({
     queryKey: ['goal'],
     queryFn: () => api.getGoal(),
@@ -162,19 +171,19 @@ export function Profile() {
   const pieData = [
     {
       key: 'carbs',
-      name: 'Carbs',
+      name: t('Carbs'),
       value: breakdown.carbsKcal,
       color: MACRO_COLORS.carbs,
     },
     {
       key: 'protein',
-      name: 'Protein',
+      name: t('Protein'),
       value: breakdown.proteinKcal,
       color: MACRO_COLORS.protein,
     },
     {
       key: 'fat',
-      name: 'Fat',
+      name: t('Fat'),
       value: breakdown.fatKcal,
       color: MACRO_COLORS.fat,
     },
@@ -219,7 +228,13 @@ export function Profile() {
       qc.invalidateQueries({ queryKey: ['goal'] });
       qc.invalidateQueries({ queryKey: ['profile'] });
       qc.invalidateQueries({ queryKey: ['summary'] });
+      toast.success(t('Profile saved'));
       setTimeout(() => setSaved(false), 2000);
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof Error ? err.message : t('Could not save profile'),
+      );
     },
   });
 
@@ -231,15 +246,15 @@ export function Profile() {
       onClick={() => save.mutate()}
       disabled={save.isPending || loading || error}
     >
-      {save.isPending ? 'Saving...' : saved ? 'Saved' : 'Save'}
+      {save.isPending ? t('Saving...') : saved ? t('Saved') : t('Save')}
     </HeaderSaveButton>,
-    [save.isPending, saved, loading, error],
+    [save.isPending, saved, loading, error, t],
   );
 
   if (loading) {
     return (
       <Page>
-        <Title>Profile</Title>
+        <Title>{t('Profile')}</Title>
         <ProfileSkeleton />
       </Page>
     );
@@ -248,17 +263,17 @@ export function Profile() {
   if (error) {
     return (
       <Page>
-        <Title>Profile</Title>
+        <Title>{t('Profile')}</Title>
         <AnimatedCard>
           <ErrorState>
-            <p>We could not load your profile.</p>
+            <p>{t('We could not load your profile.')}</p>
             <RetryButton
               onClick={() => {
                 goalQuery.refetch();
                 profileQuery.refetch();
               }}
             >
-              Try again
+              {t('Try again')}
             </RetryButton>
           </ErrorState>
         </AnimatedCard>
@@ -268,11 +283,11 @@ export function Profile() {
 
   return (
     <Page>
-      <Title>Profile</Title>
+      <Title>{t('Profile')}</Title>
 
       {/* Basics: weight, calories, steps */}
       <AnimatedCard>
-        <SectionTitle>Basics</SectionTitle>
+        <SectionTitle>{t('Basics')}</SectionTitle>
         <ProfileList>
           <ProfileRow>
             <RowMain>
@@ -280,8 +295,8 @@ export function Profile() {
                 <ScaleIcon size={20} />
               </IconChip>
               <RowLabel>
-                <RowName>Current weight</RowName>
-                <RowHint>Used for future goal recommendations.</RowHint>
+                <RowName>{t('Current weight')}</RowName>
+                <RowHint>{t('Used for future goal recommendations.')}</RowHint>
               </RowLabel>
             </RowMain>
             <RowControl>
@@ -317,8 +332,8 @@ export function Profile() {
                 <FlameIcon size={20} />
               </IconChip>
               <RowLabel>
-                <RowName>Daily calorie goal</RowName>
-                <RowHint>Your target for the dashboard ring.</RowHint>
+                <RowName>{t('Daily calorie goal')}</RowName>
+                <RowHint>{t('Your target for the dashboard ring.')}</RowHint>
               </RowLabel>
             </RowMain>
             <RowControl>
@@ -331,7 +346,7 @@ export function Profile() {
                   onChange={(e) => setCalories(Number(e.target.value))}
                 />
               </Field>
-              <FieldSuffix>kcal / day</FieldSuffix>
+              <FieldSuffix>{t('kcal / day')}</FieldSuffix>
             </RowControl>
           </ProfileRow>
 
@@ -341,8 +356,8 @@ export function Profile() {
                 <ActivityIcon size={20} />
               </IconChip>
               <RowLabel>
-                <RowName>Daily step goal</RowName>
-                <RowHint>A simple activity target for each day.</RowHint>
+                <RowName>{t('Daily step goal')}</RowName>
+                <RowHint>{t('A simple activity target for each day.')}</RowHint>
               </RowLabel>
             </RowMain>
             <RowControl>
@@ -355,7 +370,7 @@ export function Profile() {
                   onChange={(e) => setSteps(Number(e.target.value))}
                 />
               </Field>
-              <FieldSuffix>steps / day</FieldSuffix>
+              <FieldSuffix>{t('steps / day')}</FieldSuffix>
             </RowControl>
           </ProfileRow>
         </ProfileList>
@@ -363,14 +378,14 @@ export function Profile() {
 
       {/* Macros */}
       <AnimatedCard $delay={60}>
-        <SectionTitle>Macros</SectionTitle>
+        <SectionTitle>{t('Macros')}</SectionTitle>
         <SectionHint>
-          Fine-tune grams per macro. The ring shows your energy split.
+          {t('Fine-tune grams per macro. The ring shows your energy split.')}
         </SectionHint>
         <NutritionLayout>
           <MacroList>
             <MacroSlider
-              label="Carbs"
+              label={t('Carbs')}
               color={MACRO_COLORS.carbs}
               grams={carbs}
               pct={breakdown.carbsPct}
@@ -378,7 +393,7 @@ export function Profile() {
               onChange={setCarbs}
             />
             <MacroSlider
-              label="Protein"
+              label={t('Protein')}
               color={MACRO_COLORS.protein}
               grams={protein}
               pct={breakdown.proteinPct}
@@ -386,7 +401,7 @@ export function Profile() {
               onChange={setProtein}
             />
             <MacroSlider
-              label="Fat"
+              label={t('Fat')}
               color={MACRO_COLORS.fat}
               grams={fat}
               pct={breakdown.fatPct}
@@ -415,7 +430,7 @@ export function Profile() {
             </ResponsiveContainer>
             <PieCenter>
               <PieTotal>{Math.round(breakdown.totalKcal)}</PieTotal>
-              <PieLabel>macro kcal</PieLabel>
+              <PieLabel>{t('macro kcal')}</PieLabel>
             </PieCenter>
           </PieWrap>
         </NutritionLayout>
@@ -423,9 +438,9 @@ export function Profile() {
 
       {/* Diet */}
       <AnimatedCard $delay={120}>
-        <SectionTitle>Diet</SectionTitle>
+        <SectionTitle>{t('Diet')}</SectionTitle>
         <SectionHint>
-          Picking a diet recalculates your macros from your calorie goal.
+          {t('Picking a diet recalculates your macros from your calorie goal.')}
         </SectionHint>
         <DietGrid>
           {DIET_PRESETS.map((preset) => {
@@ -441,9 +456,9 @@ export function Profile() {
                   <DietIcon $active={active}>
                     <Icon size={18} />
                   </DietIcon>
-                  <DietName $active={active}>{preset.label}</DietName>
+                  <DietName $active={active}>{t(preset.label)}</DietName>
                 </DietHead>
-                <DietDesc>{preset.description}</DietDesc>
+                <DietDesc>{t(preset.description)}</DietDesc>
               </DietOption>
             );
           })}
@@ -452,13 +467,13 @@ export function Profile() {
 
       {/* Water */}
       <AnimatedCard $delay={180}>
-        <SectionTitle>Water</SectionTitle>
+        <SectionTitle>{t('Water')}</SectionTitle>
         <WaterBig>
           <WaterIcon>
             <DropletIcon size={24} />
           </WaterIcon>
           <WaterMl>{waterMl}</WaterMl>
-          <WaterUnit>ml per day</WaterUnit>
+          <WaterUnit>{t('ml per day')}</WaterUnit>
         </WaterBig>
         <WaterOptions>
           {WATER_OPTIONS.map((ml) => (
@@ -471,6 +486,39 @@ export function Profile() {
             </WaterOption>
           ))}
         </WaterOptions>
+      </AnimatedCard>
+
+      {/* Appearance */}
+      <AnimatedCard $delay={240}>
+        <SectionTitle>{t('Appearance')}</SectionTitle>
+        <AppearanceRow>
+          <RowLabel>
+            <RowName>{t('Language')}</RowName>
+            <RowHint>{t('English or Vietnamese.')}</RowHint>
+          </RowLabel>
+          <LanguageToggle />
+        </AppearanceRow>
+        <AppearanceRow>
+          <RowLabel>
+            <RowName>{t('Display mode')}</RowName>
+            <RowHint>{t('System, light or dark.')}</RowHint>
+          </RowLabel>
+          <ThemeToggle />
+        </AppearanceRow>
+        <AppearanceRow>
+          <RowLabel>
+            <RowName>{t('NutriBot assistant')}</RowName>
+            <RowHint>{t('Show the floating helper bot.')}</RowHint>
+          </RowLabel>
+          <Switch
+            type="button"
+            role="switch"
+            aria-checked={botEnabled}
+            aria-label={t('Show the floating helper bot.')}
+            $on={botEnabled}
+            onClick={() => setBotEnabled(!botEnabled)}
+          />
+        </AppearanceRow>
       </AnimatedCard>
     </Page>
   );

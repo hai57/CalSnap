@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { Layout } from './components/Layout';
 import { useAuth } from './auth/AuthContext';
+import { useLang } from './i18n';
 import type { ReactNode } from 'react';
 import { AddEntry } from './pages/AddEntry';
 import { Dashboard } from './pages/Dashboard';
@@ -23,8 +24,9 @@ const FullScreenCenter = styled.div`
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
+  const { t } = useLang();
   if (loading) {
-    return <FullScreenCenter>Loading...</FullScreenCenter>;
+    return <FullScreenCenter>{t('Loading...')}</FullScreenCenter>;
   }
   if (!user) return <Navigate to="/login" replace />;
   return <Layout>{children}</Layout>;

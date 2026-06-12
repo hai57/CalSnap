@@ -5,6 +5,7 @@ import type { DailySummary, FoodEntry } from '@shared/types';
 import { MacroBar } from '../components/MacroBar';
 import { MacroRing } from '../components/MacroRing';
 import { api, resolveImageUrl } from '../lib/api';
+import { useLang } from '../i18n';
 import { todayStr } from '../lib/date';
 import { formatTime } from '../lib/date';
 import { Card } from '../styles/ui';
@@ -44,6 +45,7 @@ const DEFAULT_GOAL = {
 export function Dashboard() {
   const day = todayStr();
   const qc = useQueryClient();
+  const { t, lang } = useLang();
 
   const { data, isLoading } = useQuery<DailySummary>({
     queryKey: ['summary', day],
@@ -62,9 +64,9 @@ export function Dashboard() {
     <Page>
       <HeaderRow>
         <div>
-          <Title>Today</Title>
+          <Title>{t('Today')}</Title>
           <Subtitle>
-            {new Date().toLocaleDateString([], {
+            {new Date().toLocaleDateString(lang === 'vi' ? 'vi-VN' : [], {
               weekday: 'long',
               month: 'long',
               day: 'numeric',
@@ -79,19 +81,19 @@ export function Dashboard() {
         </RingCard>
         <MacroCard>
           <MacroBar
-            label="Protein"
+            label={t('Protein')}
             value={totals.protein}
             goal={goal.protein_target}
             color="#3b82f6"
           />
           <MacroBar
-            label="Carbs"
+            label={t('Carbs')}
             value={totals.carbs}
             goal={goal.carb_target}
             color="#f59e0b"
           />
           <MacroBar
-            label="Fat"
+            label={t('Fat')}
             value={totals.fat}
             goal={goal.fat_target}
             color="#ef4444"
@@ -100,9 +102,9 @@ export function Dashboard() {
       </Grid>
 
       <Card>
-        <SectionTitle>Meals logged today</SectionTitle>
+        <SectionTitle>{t('Meals logged today')}</SectionTitle>
         {isLoading ? (
-          <Muted>Loading...</Muted>
+          <Muted>{t('Loading...')}</Muted>
         ) : data && data.entries.length > 0 ? (
           <EntryList>
             {data.entries.map((entry) => (
@@ -115,8 +117,8 @@ export function Dashboard() {
           </EntryList>
         ) : (
           <EmptyState>
-            <EmptyText>No meals logged yet.</EmptyText>
-            <EmptyLink to="/add">Snap or describe your first meal</EmptyLink>
+            <EmptyText>{t('No meals logged yet.')}</EmptyText>
+            <EmptyLink to="/add">{t('Snap or describe your first meal')}</EmptyLink>
           </EmptyState>
         )}
       </Card>
@@ -131,6 +133,7 @@ function EntryRow({
   entry: FoodEntry;
   onDelete: () => void;
 }) {
+  const { t } = useLang();
   const img = resolveImageUrl(entry.image_url);
   return (
     <Row>
@@ -150,7 +153,7 @@ function EntryRow({
         <RowCalories>{Math.round(entry.calories)}</RowCalories>
         <RowUnit>kcal</RowUnit>
       </RowRight>
-      <DeleteButton onClick={onDelete} aria-label="Delete entry">
+      <DeleteButton onClick={onDelete} aria-label={t('Delete entry')}>
         ✕
       </DeleteButton>
     </Row>

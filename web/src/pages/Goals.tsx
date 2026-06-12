@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import type { DailyGoal } from '@shared/types';
 
 import { api } from '../lib/api';
+import { useToast } from '../components/Toast';
+import { useLang } from '../i18n';
 import {
   MutedText as Muted,
   NarrowColumn as Page,
@@ -22,6 +24,8 @@ const DEFAULTS: DailyGoal = {
 
 export function Goals() {
   const qc = useQueryClient();
+  const toast = useToast();
+  const { t } = useLang();
   const { data, isLoading } = useQuery<DailyGoal | null>({
     queryKey: ['goal'],
     queryFn: () => api.getGoal(),
@@ -40,7 +44,11 @@ export function Goals() {
       setSaved(true);
       qc.invalidateQueries({ queryKey: ['goal'] });
       qc.invalidateQueries({ queryKey: ['summary'] });
+      toast.success(t('Goals saved'));
       setTimeout(() => setSaved(false), 2000);
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : t('Could not save goals'));
     },
   });
 
@@ -51,29 +59,29 @@ export function Goals() {
 
   return (
     <Page>
-      <Title>Daily goals</Title>
+      <Title>{t('Daily goals')}</Title>
       <FormCard>
         {isLoading ? (
-          <Muted>Loading...</Muted>
+          <Muted>{t('Loading...')}</Muted>
         ) : (
           <>
             <Row
-              label="Calorie target (kcal)"
+              label={t('Calorie target (kcal)')}
               value={form.calorie_target}
               onChange={field('calorie_target')}
             />
             <Row
-              label="Protein target (g)"
+              label={t('Protein target (g)')}
               value={form.protein_target}
               onChange={field('protein_target')}
             />
             <Row
-              label="Carbs target (g)"
+              label={t('Carbs target (g)')}
               value={form.carb_target}
               onChange={field('carb_target')}
             />
             <Row
-              label="Fat target (g)"
+              label={t('Fat target (g)')}
               value={form.fat_target}
               onChange={field('fat_target')}
             />
@@ -82,7 +90,11 @@ export function Goals() {
               disabled={save.isPending}
               $fullWidth
             >
-              {save.isPending ? 'Saving...' : saved ? 'Saved!' : 'Save goals'}
+              {save.isPending
+                ? t('Saving...')
+                : saved
+                  ? t('Saved!')
+                  : t('Save goals')}
             </PrimaryButton>
           </>
         )}

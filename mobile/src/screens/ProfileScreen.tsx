@@ -1,14 +1,7 @@
 import Slider from '@react-native-community/slider';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import type {
@@ -26,8 +19,13 @@ import {
 } from '@shared/nutrition';
 
 import { api } from '../api';
+import { useAuth } from '../auth';
+import { useBot } from '../bot';
 import { Card, PrimaryButton } from '../components';
+import { LanguageToggle, useLang } from '../i18n';
+import { ThemeToggle } from '../themeContext';
 import { colors } from '../theme';
+import { useToast } from '../toast';
 import {
   ActivityIcon,
   AvocadoIcon,
@@ -59,7 +57,10 @@ function round1(n: number): number {
   return Math.round(n * 10) / 10;
 }
 
-export function ProfileScreen() {
+export function ProfileScreen({ navigation }: { navigation: any }) {
+  const { logout } = useAuth();
+  const { t } = useLang();
+  const { enabled: botEnabled, setEnabled: setBotEnabled } = useBot();
   const [calories, setCalories] = useState(2000);
   const [carbs, setCarbs] = useState(250);
   const [protein, setProtein] = useState(120);
@@ -71,6 +72,7 @@ export function ProfileScreen() {
   const [steps, setSteps] = useState('8000');
   const [waterMl, setWaterMl] = useState(2000);
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   const load = useCallback(async () => {
     const [goal, profile] = await Promise.all([
@@ -143,12 +145,9 @@ export function ProfileScreen() {
         steps_target: Number(steps) || 0,
         water_ml: waterMl,
       } satisfies UserProfile);
-      Alert.alert('Saved', 'Your profile has been updated.');
+      toast.success(t('Profile updated'));
     } catch (err) {
-      Alert.alert(
-        "Couldn't save",
-        err instanceof Error ? err.message : 'Try again',
-      );
+      toast.error(err instanceof Error ? err.message : t("Couldn't save"));
     } finally {
       setBusy(false);
     }
@@ -161,19 +160,15 @@ export function ProfileScreen() {
     >
       {/* Basics */}
       <Card style={{ gap: 4 }}>
-        <SectionTitle>Basics</SectionTitle>
+        <SectionTitle>{t('Basics')}</SectionTitle>
 
         <ProfileRow
           first
           icon={<ScaleIcon size={20} color={colors.brandDark} />}
-          name="Current weight"
-          hint="Used for future goal recommendations."
+          name={t('Current weight')}
+          hint={t('Used for future goal recommendations.')}
         >
-          <ValueField
-            value={weight}
-            onChangeText={setWeight}
-            width={66}
-          />
+          <ValueField value={weight} onChangeText={setWeight} width={66} />
           <Segmented
             options={[
               { key: 'kg', label: 'kg' },
@@ -186,31 +181,33 @@ export function ProfileScreen() {
 
         <ProfileRow
           icon={<FlameIcon size={20} color={colors.brandDark} />}
-          name="Daily calorie goal"
-          hint="Your target for the dashboard ring."
+          name={t('Daily calorie goal')}
+          hint={t('Your target for the dashboard ring.')}
         >
           <ValueField
             value={String(calories)}
             onChangeText={(v) => setCalories(Number(v) || 0)}
             width={66}
           />
-          <Unit>kcal / day</Unit>
+          <Unit>{t('kcal / day')}</Unit>
         </ProfileRow>
 
         <ProfileRow
           icon={<ActivityIcon size={20} color={colors.brandDark} />}
-          name="Daily step goal"
-          hint="A simple activity target for each day."
+          name={t('Daily step goal')}
+          hint={t('A simple activity target for each day.')}
         >
           <ValueField value={steps} onChangeText={setSteps} width={66} />
-          <Unit>steps / day</Unit>
+          <Unit>{t('steps / day')}</Unit>
         </ProfileRow>
       </Card>
 
       {/* Macros */}
       <Card style={{ gap: 14 }}>
-        <SectionTitle>Macros</SectionTitle>
-        <Hint>Fine-tune grams per macro. The ring shows your energy split.</Hint>
+        <SectionTitle>{t('Macros')}</SectionTitle>
+        <Hint>
+          {t('Fine-tune grams per macro. The ring shows your energy split.')}
+        </Hint>
         <View style={{ alignItems: 'center' }}>
           <MacroDonut
             carbsKcal={breakdown.carbsKcal}
@@ -220,7 +217,7 @@ export function ProfileScreen() {
           />
         </View>
         <MacroSlider
-          label="Carbs"
+          label={t('Carbs')}
           color={MACRO_COLORS.carbs}
           grams={carbs}
           pct={breakdown.carbsPct}
@@ -228,7 +225,7 @@ export function ProfileScreen() {
           onChange={setCarbs}
         />
         <MacroSlider
-          label="Protein"
+          label={t('Protein')}
           color={MACRO_COLORS.protein}
           grams={protein}
           pct={breakdown.proteinPct}
@@ -236,7 +233,7 @@ export function ProfileScreen() {
           onChange={setProtein}
         />
         <MacroSlider
-          label="Fat"
+          label={t('Fat')}
           color={MACRO_COLORS.fat}
           grams={fat}
           pct={breakdown.fatPct}
@@ -247,8 +244,10 @@ export function ProfileScreen() {
 
       {/* Diet */}
       <Card style={{ gap: 10 }}>
-        <SectionTitle>Diet</SectionTitle>
-        <Hint>Picking a diet recalculates your macros from your calorie goal.</Hint>
+        <SectionTitle>{t('Diet')}</SectionTitle>
+        <Hint>
+          {t('Picking a diet recalculates your macros from your calorie goal.')}
+        </Hint>
         {DIET_PRESETS.map((preset) => {
           const active = preset.mode === dietMode;
           const Icon = DIET_ICONS[preset.mode];
@@ -259,7 +258,7 @@ export function ProfileScreen() {
               style={{
                 borderWidth: 1,
                 borderColor: active ? colors.brand : colors.border,
-                backgroundColor: active ? colors.brandLight : '#fff',
+                backgroundColor: active ? colors.brandLight : colors.card,
                 borderRadius: 14,
                 padding: 12,
                 gap: 6,
@@ -285,11 +284,13 @@ export function ProfileScreen() {
                     color: active ? colors.brandDark : colors.text,
                   }}
                 >
-                  {preset.label}
+                  {t(preset.label)}
                 </Text>
               </View>
-              <Text style={{ fontSize: 12, lineHeight: 17, color: colors.muted }}>
-                {preset.description}
+              <Text
+                style={{ fontSize: 12, lineHeight: 17, color: colors.muted }}
+              >
+                {t(preset.description)}
               </Text>
             </Pressable>
           );
@@ -298,7 +299,7 @@ export function ProfileScreen() {
 
       {/* Water */}
       <Card style={{ gap: 12 }}>
-        <SectionTitle>Water</SectionTitle>
+        <SectionTitle>{t('Water')}</SectionTitle>
         <View style={{ alignItems: 'center', gap: 2 }}>
           <Chip bg={colors.blueSoft} size={44} radius={14}>
             <DropletIcon size={24} color={colors.blue} />
@@ -313,7 +314,7 @@ export function ProfileScreen() {
           >
             {waterMl}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.muted }}>ml per day</Text>
+          <Text style={{ fontSize: 12, color: colors.muted }}>{t('ml per day')}</Text>
         </View>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {WATER_OPTIONS.map((ml) => {
@@ -326,7 +327,7 @@ export function ProfileScreen() {
                   flex: 1,
                   borderWidth: 1,
                   borderColor: active ? colors.blue : colors.border,
-                  backgroundColor: active ? colors.blueSoft : '#fff',
+                  backgroundColor: active ? colors.blueSoft : colors.card,
                   borderRadius: 12,
                   paddingVertical: 12,
                   alignItems: 'center',
@@ -346,7 +347,66 @@ export function ProfileScreen() {
         </View>
       </Card>
 
-      <PrimaryButton title="Save profile" onPress={save} loading={busy} />
+      {/* Appearance */}
+      <Card style={{ gap: 16 }}>
+        <SectionTitle>{t('Appearance')}</SectionTitle>
+        <AppearanceRow name={t('Language')} hint={t('English or Vietnamese.')}>
+          <LanguageToggle />
+        </AppearanceRow>
+        <AppearanceRow name={t('Display mode')} hint={t('System, light or dark.')}>
+          <ThemeToggle />
+        </AppearanceRow>
+        <AppearanceRow
+          name={t('NutriBot assistant')}
+          hint={t('Show the floating helper bot.')}
+        >
+          <Switch
+            value={botEnabled}
+            onValueChange={setBotEnabled}
+            trackColor={{ false: colors.border, true: colors.brand }}
+            thumbColor="#ffffff"
+          />
+        </AppearanceRow>
+      </Card>
+
+      <PrimaryButton title={t('Save profile')} onPress={save} loading={busy} />
+
+      {/* Account */}
+      <Card style={{ gap: 10 }}>
+        <SectionTitle>{t('Account')}</SectionTitle>
+        <Pressable
+          onPress={() => navigation.navigate('Goals')}
+          style={({ pressed }) => ({
+            borderWidth: 1,
+            borderColor: colors.border,
+            backgroundColor: pressed ? colors.chipBg : colors.card,
+            borderRadius: 12,
+            paddingVertical: 14,
+            alignItems: 'center',
+          })}
+        >
+          <Text style={{ fontWeight: '700', fontSize: 15, color: colors.text }}>
+            {t('Edit goals')}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => logout()}
+          style={({ pressed }) => ({
+            borderWidth: 1,
+            borderColor: colors.dangerBorder,
+            backgroundColor: pressed ? colors.dangerBorder : colors.dangerSoft,
+            borderRadius: 12,
+            paddingVertical: 14,
+            alignItems: 'center',
+          })}
+        >
+          <Text
+            style={{ fontWeight: '700', fontSize: 15, color: colors.danger }}
+          >
+            {t('Log out')}
+          </Text>
+        </Pressable>
+      </Card>
     </ScrollView>
   );
 }
@@ -364,6 +424,35 @@ function Hint({ children }: { children: React.ReactNode }) {
     <Text style={{ fontSize: 13, lineHeight: 18, color: colors.muted }}>
       {children}
     </Text>
+  );
+}
+
+function AppearanceRow({
+  name,
+  hint,
+  children,
+}: {
+  name: string;
+  hint: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12,
+      }}
+    >
+      <View style={{ flexShrink: 1 }}>
+        <Text style={{ fontWeight: '600', fontSize: 15, color: colors.text }}>
+          {name}
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.muted }}>{hint}</Text>
+      </View>
+      {children}
+    </View>
   );
 }
 
@@ -461,7 +550,7 @@ function ValueField({
         borderRadius: 12,
         paddingHorizontal: 10,
         justifyContent: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: colors.card,
       }}
     >
       <TextInput
@@ -482,7 +571,7 @@ function ValueField({
 
 function Unit({ children }: { children: React.ReactNode }) {
   return (
-    <Text style={{ width: 64, fontSize: 13, color: colors.muted }}>
+    <Text style={{ width: 72, fontSize: 13, color: colors.muted }}>
       {children}
     </Text>
   );
@@ -518,7 +607,7 @@ function Segmented({
               flex: 1,
               paddingVertical: 9,
               alignItems: 'center',
-              backgroundColor: active ? colors.brand : '#fff',
+              backgroundColor: active ? colors.brand : colors.card,
             }}
           >
             <Text

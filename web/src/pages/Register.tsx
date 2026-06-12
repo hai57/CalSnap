@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useAuth } from "../auth/AuthContext";
+import { useLang } from "../i18n";
 import { ErrorText, FieldLabel, Input, PrimaryButton } from "../styles/ui";
 import {
   AuthCard,
@@ -16,6 +17,7 @@ import {
 
 export function Register() {
   const { register } = useAuth();
+  const { t } = useLang();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -25,14 +27,14 @@ export function Register() {
     e.preventDefault();
     setError(null);
     if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+      setError(t("Password must be at least 6 characters"));
       return;
     }
     setBusy(true);
     try {
       await register(email, password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      setError(err instanceof Error ? err.message : t("Registration failed"));
     } finally {
       setBusy(false);
     }
@@ -43,12 +45,12 @@ export function Register() {
       <AuthCard>
         <AuthHeader>
           <BrandMark>N</BrandMark>
-          <AuthTitle>Create your account</AuthTitle>
-          <AuthSubtitle>Start tracking with AI in seconds</AuthSubtitle>
+          <AuthTitle>{t("Create your account")}</AuthTitle>
+          <AuthSubtitle>{t("Start tracking with AI in seconds")}</AuthSubtitle>
         </AuthHeader>
         <Form onSubmit={onSubmit}>
           <div>
-            <FieldLabel>Email</FieldLabel>
+            <FieldLabel>{t("Email")}</FieldLabel>
             <Input
               type="email"
               value={email}
@@ -58,7 +60,7 @@ export function Register() {
             />
           </div>
           <div>
-            <FieldLabel>Password</FieldLabel>
+            <FieldLabel>{t("Password")}</FieldLabel>
             <Input
               type="password"
               value={password}
@@ -70,11 +72,12 @@ export function Register() {
           </div>
           {error && <ErrorText>{error}</ErrorText>}
           <PrimaryButton type="submit" disabled={busy} $fullWidth>
-            {busy ? "Creating account..." : "Sign up"}
+            {busy ? t("Creating account...") : t("Sign up")}
           </PrimaryButton>
         </Form>
         <Footer>
-          Already have an account? <FooterLink to="/login">Log in</FooterLink>
+          {t("Already have an account?")}{" "}
+          <FooterLink to="/login">{t("Log in")}</FooterLink>
         </Footer>
       </AuthCard>
     </Screen>

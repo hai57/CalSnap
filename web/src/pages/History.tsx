@@ -13,6 +13,7 @@ import {
 import type { DailySummary } from '@shared/types';
 
 import { api } from '../lib/api';
+import { useLang } from '../i18n';
 import { formatDayLabel, toDateStr } from '../lib/date';
 import {
   Card,
@@ -45,6 +46,7 @@ function lastNDays(n: number): string[] {
 }
 
 export function History() {
+  const { t } = useLang();
   const days = lastNDays(DAYS);
 
   const results = useQueries({
@@ -78,20 +80,23 @@ export function History() {
   return (
     <Page>
       <HeaderRow>
-        <Title>Progress</Title>
-        <EditGoalsButton to="/goals">Edit goals</EditGoalsButton>
+        <Title>{t('Progress')}</Title>
+        <EditGoalsButton to="/goals">{t('Edit goals')}</EditGoalsButton>
       </HeaderRow>
 
       <StatGrid>
-        <Stat label="Daily average" value={`${avg} kcal`} />
-        <Stat label="Days logged" value={`${loggedDays.length} / ${DAYS}`} />
-        <GoalStat label="Calorie goal" value={`${Math.round(goal)} kcal`} />
+        <Stat label={t('Daily average')} value={`${avg} kcal`} />
+        <Stat
+          label={t('Days logged')}
+          value={`${loggedDays.length} / ${DAYS}`}
+        />
+        <GoalStat label={t('Calorie goal')} value={`${Math.round(goal)} kcal`} />
       </StatGrid>
 
       <Card>
-        <SectionTitle>Last 7 days</SectionTitle>
+        <SectionTitle>{t('Last 7 days')}</SectionTitle>
         {loading ? (
-          <Muted>Loading...</Muted>
+          <Muted>{t('Loading...')}</Muted>
         ) : (
           <ChartWrap>
             <ResponsiveContainer width="100%" height="100%">
@@ -116,7 +121,7 @@ export function History() {
                 />
                 <Tooltip
                   cursor={{ fill: 'rgba(16,185,129,0.08)' }}
-                  formatter={(v: number) => [`${v} kcal`, 'Calories']}
+                  formatter={(v: number) => [`${v} kcal`, t('Calories')]}
                 />
                 <ReferenceLine
                   y={goal}

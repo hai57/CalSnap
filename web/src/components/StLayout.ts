@@ -115,7 +115,7 @@ export const MobileNav = styled.nav`
   display: flex;
   justify-content: space-around;
   border-top: 1px solid ${colors.slate200};
-  background: rgba(255, 255, 255, 0.9);
+  background: ${colors.surface};
   padding: 0.5rem 0;
   backdrop-filter: blur(8px);
 

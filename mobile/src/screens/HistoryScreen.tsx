@@ -7,6 +7,7 @@ import type { DailySummary } from "@shared/types";
 import { api } from "../api";
 import { Card } from "../components";
 import { shortDay, toDateStr } from "../date";
+import { useLang } from "../i18n";
 import { colors } from "../theme";
 
 const DAYS = 7;
@@ -23,6 +24,7 @@ function lastNDays(n: number): string[] {
 }
 
 export function HistoryScreen({ navigation }: { navigation: any }) {
+  const { t } = useLang();
   const [data, setData] = useState<{ day: string; calories: number }[]>([]);
   const [goal, setGoal] = useState(2000);
 
@@ -66,18 +68,18 @@ export function HistoryScreen({ navigation }: { navigation: any }) {
             borderRadius: 10,
             borderWidth: 1,
             borderColor: colors.border,
-            backgroundColor: pressed ? colors.border : "#fff",
+            backgroundColor: pressed ? colors.border : colors.card,
           })}
         >
-          <Text style={{ color: colors.text, fontWeight: "600" }}>Edit goals</Text>
+          <Text style={{ color: colors.text, fontWeight: "600" }}>{t("Edit goals")}</Text>
         </Pressable>
       </View>
 
       <View style={{ flexDirection: "row", gap: 12 }}>
-        <Stat label="Avg / day" value={`${avg}`} />
-        <Stat label="Days logged" value={`${logged.length}/${DAYS}`} />
+        <Stat label={t("Avg / day")} value={`${avg}`} />
+        <Stat label={t("Days logged")} value={`${logged.length}/${DAYS}`} />
         <Stat
-          label="Goal"
+          label={t("Goal")}
           value={`${Math.round(goal)}`}
           onPress={() => navigation.navigate("Goals")}
         />
@@ -85,7 +87,7 @@ export function HistoryScreen({ navigation }: { navigation: any }) {
 
       <Card>
         <Text style={{ fontSize: 16, fontWeight: "700", color: colors.text, marginBottom: 16 }}>
-          Last 7 days
+          {t("Last 7 days")}
         </Text>
         <View style={{ flexDirection: "row", alignItems: "flex-end", height: 180, gap: 8 }}>
           {data.map((d) => {

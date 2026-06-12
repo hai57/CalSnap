@@ -3,9 +3,9 @@ import styled, { css } from "styled-components";
 import { colors } from "./theme";
 
 export const Card = styled.div<{ $padding?: string }>`
-  background: rgba(255, 255, 255, 0.85);
+  background: ${colors.surface};
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(15, 23, 42, 0.06);
+  border: 1px solid ${colors.surfaceBorder};
   border-radius: 1rem;
   box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
   padding: ${(p) => p.$padding ?? "1.5rem"};
@@ -18,7 +18,7 @@ export const PrimaryButton = styled.button<{ $fullWidth?: boolean }>`
   ${(p) => p.$fullWidth && css`width: 100%;`}
   border: none;
   background: linear-gradient(135deg, ${colors.brand500}, ${colors.brand600});
-  color: ${colors.white};
+  color: ${colors.onAccent};
   font-weight: 600;
   font-family: inherit;
   font-size: 0.875rem;
@@ -147,7 +147,7 @@ export const BrandMark = styled.div<{ $size?: "sm" | "lg" }>`
   display: grid;
   place-items: center;
   background: ${colors.brand500};
-  color: ${colors.white};
+  color: ${colors.onAccent};
   font-weight: 700;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   ${(p) =>

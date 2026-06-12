@@ -1,11 +1,13 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useAuth } from '../auth/AuthContext';
+import { useLang } from '../i18n';
 import { colors } from '../styles/theme';
 import { PrimaryButton } from '../styles/ui';
 import { LayoutActionProvider, useLayoutActionSlot } from './LayoutAction';
+import { NutriBot } from './NutriBot';
 import {
   HeaderRight,
   LogoutButton,
@@ -31,11 +33,33 @@ const Shell = styled.div`
   padding: 0 1rem;
 `;
 
-const Header = styled.header`
+// 1px sentinel at the very top; when it scrolls out of view the header is "scrolled".
+const Sentinel = styled.div`
+  height: 1px;
+`;
+
+const Header = styled.header<{ $scrolled: boolean }>`
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 0;
+  padding: 1.1rem 1rem;
+  margin: 0 -1rem;
+  border-bottom: 1px solid
+    ${(p) => (p.$scrolled ? colors.surfaceBorder : 'transparent')};
+  backdrop-filter: ${(p) =>
+    p.$scrolled ? 'blur(10px) saturate(160%)' : 'none'};
+  -webkit-backdrop-filter: ${(p) =>
+    p.$scrolled ? 'blur(10px) saturate(160%)' : 'none'};
+  box-shadow: ${(p) =>
+    p.$scrolled ? '0 6px 20px -16px rgba(15, 23, 42, 0.65)' : 'none'};
+  transition:
+    background 0.25s ease,
+    backdrop-filter 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 `;
 
 const Brand = styled.div`
@@ -53,7 +77,7 @@ const BrandMark = styled.div`
   background: ${colors.brand500};
   font-size: 1.125rem;
   font-weight: 700;
-  color: ${colors.white};
+  color: ${colors.onAccent};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
@@ -91,10 +115,26 @@ function LayoutShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { action } = useLayoutActionSlot();
+  const { t } = useLang();
+
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setScrolled(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <Shell>
-      <Header>
+      <Sentinel ref={sentinelRef} />
+      <Header $scrolled={scrolled}>
         <Brand>
           <BrandMark>N</BrandMark>
           <BrandName>NutriLens</BrandName>
@@ -102,13 +142,13 @@ function LayoutShell({ children }: { children: ReactNode }) {
         <DesktopNav>
           {navItems.map((item) => (
             <NavItem key={item.to} to={item.to} end={item.end}>
-              {item.label}
+              {t(item.label)}
             </NavItem>
           ))}
         </DesktopNav>
         <HeaderRight>
           {action}
-          <AddButton to="/add">+ Add food</AddButton>
+          <AddButton to="/add">{t('+ Add food')}</AddButton>
           <UserEmail>{user?.email}</UserEmail>
           <LogoutButton
             onClick={() => {
@@ -116,7 +156,7 @@ function LayoutShell({ children }: { children: ReactNode }) {
               navigate('/login');
             }}
           >
-            Log out
+            {t('Log out')}
           </LogoutButton>
         </HeaderRight>
       </Header>
@@ -126,10 +166,12 @@ function LayoutShell({ children }: { children: ReactNode }) {
       <MobileNav>
         {navItems.map((item) => (
           <MobileNavItem key={item.to} to={item.to} end={item.end}>
-            {item.label}
+            {t(item.label)}
           </MobileNavItem>
         ))}
       </MobileNav>
+
+      <NutriBot />
     </Shell>
   );
 }

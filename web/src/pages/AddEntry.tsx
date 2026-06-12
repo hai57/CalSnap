@@ -5,6 +5,8 @@ import type { AnalyzeResult } from '@shared/types';
 
 import { api, resolveImageUrl } from '../lib/api';
 import { CameraIcon, PencilIcon } from '../components/BaseIcons';
+import { useToast } from '../components/Toast';
+import { useLang } from '../i18n';
 import {
   ErrorText,
   FieldLabel,
@@ -38,21 +40,22 @@ import {
 type Mode = 'photo' | 'text';
 
 export function AddEntry() {
+  const { t } = useLang();
   const [mode, setMode] = useState<Mode>('photo');
   const [result, setResult] = useState<AnalyzeResult | null>(null);
 
   return (
     <Page>
-      <Title>Add food</Title>
+      <Title>{t('Add food')}</Title>
 
       {!result && (
         <>
           <Tabs>
             <Tab $active={mode === 'photo'} onClick={() => setMode('photo')}>
-              <CameraIcon /> Photo
+              <CameraIcon /> {t('Photo')}
             </Tab>
             <Tab $active={mode === 'text'} onClick={() => setMode('text')}>
-              <PencilIcon /> Describe
+              <PencilIcon /> {t('Describe')}
             </Tab>
           </Tabs>
           {mode === 'photo' ? (
@@ -69,6 +72,7 @@ export function AddEntry() {
 }
 
 function PhotoForm({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
+  const { t } = useLang();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -89,7 +93,7 @@ function PhotoForm({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
       form.append('file', file);
       onResult(await api.analyzeImage(form));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      setError(err instanceof Error ? err.message : t('Analysis failed'));
     } finally {
       setBusy(false);
     }
@@ -112,20 +116,21 @@ function PhotoForm({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
             <DropIcon>
               <CameraIcon size={40} />
             </DropIcon>
-            <DropTitle>Tap to take or upload a photo</DropTitle>
-            <DropSub>JPG, PNG or WEBP up to 10 MB</DropSub>
+            <DropTitle>{t('Tap to take or upload a photo')}</DropTitle>
+            <DropSub>{t('JPG, PNG or WEBP up to 10 MB')}</DropSub>
           </DropHint>
         )}
       </Dropzone>
       {error && <ErrorText>{error}</ErrorText>}
       <PrimaryButton onClick={analyze} disabled={!file || busy} $fullWidth>
-        {busy ? 'Analyzing with AI...' : 'Analyze photo'}
+        {busy ? t('Analyzing with AI...') : t('Analyze photo')}
       </PrimaryButton>
     </FormCard>
   );
 }
 
 function TextForm({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
+  const { t } = useLang();
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -137,7 +142,7 @@ function TextForm({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
     try {
       onResult(await api.analyzeText(text.trim()));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      setError(err instanceof Error ? err.message : t('Analysis failed'));
     } finally {
       setBusy(false);
     }
@@ -146,7 +151,9 @@ function TextForm({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
   return (
     <FormCard>
       <Textarea
-        placeholder="e.g. Two scrambled eggs, a slice of whole-wheat toast with butter, and a black coffee"
+        placeholder={t(
+          'e.g. Two scrambled eggs, a slice of whole-wheat toast with butter, and a black coffee',
+        )}
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
@@ -156,7 +163,7 @@ function TextForm({ onResult }: { onResult: (r: AnalyzeResult) => void }) {
         disabled={!text.trim() || busy}
         $fullWidth
       >
-        {busy ? 'Analyzing with AI...' : 'Estimate calories'}
+        {busy ? t('Analyzing with AI...') : t('Estimate calories')}
       </PrimaryButton>
     </FormCard>
   );
@@ -170,6 +177,8 @@ function ConfirmCard({
   onBack: () => void;
 }) {
   const navigate = useNavigate();
+  const toast = useToast();
+  const { t } = useLang();
   const [form, setForm] = useState({
     name: result.name,
     calories: Math.round(result.calories),
@@ -197,9 +206,12 @@ function ConfirmCard({
         image_url: result.image_url,
         confidence: result.confidence,
       });
+      toast.success(t('{name} added', { name: form.name }));
       navigate('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save');
+      const msg = err instanceof Error ? err.message : t('Could not save');
+      setError(msg);
+      toast.error(msg);
       setBusy(false);
     }
   }
@@ -207,20 +219,22 @@ function ConfirmCard({
   return (
     <FormCard>
       <BadgeRow>
-        <Badge>AI estimate</Badge>
+        <Badge>{t('AI estimate')}</Badge>
         {result.confidence != null && (
           <Confidence>
-            {Math.round(result.confidence * 100)}% confidence
+            {t('{pct}% confidence', {
+              pct: Math.round(result.confidence * 100),
+            })}
           </Confidence>
         )}
       </BadgeRow>
 
       {img && <ResultImage src={img} alt={form.name} />}
 
-      <Hint>Review and tweak before saving.</Hint>
+      <Hint>{t('Review and tweak before saving.')}</Hint>
 
       <div>
-        <FieldLabel>Food</FieldLabel>
+        <FieldLabel>{t('Food')}</FieldLabel>
         <Input
           value={form.name}
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -229,25 +243,29 @@ function ConfirmCard({
 
       <FieldGrid>
         <Field
-          label="Calories (kcal)"
+          label={t('Calories (kcal)')}
           value={form.calories}
           onChange={num('calories')}
         />
         <Field
-          label="Protein (g)"
+          label={t('Protein (g)')}
           value={form.protein}
           onChange={num('protein')}
         />
-        <Field label="Carbs (g)" value={form.carbs} onChange={num('carbs')} />
-        <Field label="Fat (g)" value={form.fat} onChange={num('fat')} />
+        <Field
+          label={t('Carbs (g)')}
+          value={form.carbs}
+          onChange={num('carbs')}
+        />
+        <Field label={t('Fat (g)')} value={form.fat} onChange={num('fat')} />
       </FieldGrid>
 
       {error && <ErrorText>{error}</ErrorText>}
 
       <Actions>
-        <BackButton onClick={onBack}>Back</BackButton>
+        <BackButton onClick={onBack}>{t('Back')}</BackButton>
         <SaveButton onClick={save} disabled={busy}>
-          {busy ? 'Saving...' : 'Save entry'}
+          {busy ? t('Saving...') : t('Save entry')}
         </SaveButton>
       </Actions>
     </FormCard>

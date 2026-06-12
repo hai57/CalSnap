@@ -17,12 +17,14 @@ import { Card } from "../components";
 import { resolveImageUrl } from "../config";
 import { formatTime, todayStr } from "../date";
 import { useAuth } from "../auth";
+import { useLang } from "../i18n";
 import { colors } from "../theme";
 
 const DEFAULT_GOAL = { calorie_target: 2000, protein_target: 120, carb_target: 250, fat_target: 70 };
 
 export function DashboardScreen() {
   const { logout } = useAuth();
+  const { t } = useLang();
   const [summary, setSummary] = useState<DailySummary | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -65,25 +67,28 @@ export function DashboardScreen() {
       }
     >
       <Card style={{ alignItems: "center" }}>
-        <Text style={{ color: colors.muted, fontWeight: "600" }}>Calories today</Text>
+        <Text style={{ color: colors.muted, fontWeight: "600" }}>{t("Calories today")}</Text>
         <Text style={{ fontSize: 48, fontWeight: "800", color: colors.text, marginVertical: 4 }}>
           {Math.round(totals.calories)}
         </Text>
         <Text style={{ color: colors.muted }}>
-          {Math.round(remaining)} kcal left of {Math.round(goal.calorie_target)}
+          {t("{remaining} kcal left of {goal}", {
+            remaining: Math.round(remaining),
+            goal: Math.round(goal.calorie_target),
+          })}
         </Text>
         <View style={{ flexDirection: "row", gap: 18, marginTop: 16 }}>
-          <Macro label="Protein" value={totals.protein} color={colors.protein} />
-          <Macro label="Carbs" value={totals.carbs} color={colors.carbs} />
-          <Macro label="Fat" value={totals.fat} color={colors.fat} />
+          <Macro label={t("Protein")} value={totals.protein} color={colors.protein} />
+          <Macro label={t("Carbs")} value={totals.carbs} color={colors.carbs} />
+          <Macro label={t("Fat")} value={totals.fat} color={colors.fat} />
         </View>
       </Card>
 
       <View>
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
-          <Text style={{ fontSize: 18, fontWeight: "700", color: colors.text }}>Meals today</Text>
+          <Text style={{ fontSize: 18, fontWeight: "700", color: colors.text }}>{t("Meals today")}</Text>
           <Pressable onPress={logout}>
-            <Text style={{ color: colors.muted }}>Log out</Text>
+            <Text style={{ color: colors.muted }}>{t("Log out")}</Text>
           </Pressable>
         </View>
         {summary && summary.entries.length > 0 ? (
@@ -92,9 +97,9 @@ export function DashboardScreen() {
               key={e.id}
               entry={e}
               onDelete={() =>
-                Alert.alert("Delete entry", `Remove "${e.name}"?`, [
-                  { text: "Cancel", style: "cancel" },
-                  { text: "Delete", style: "destructive", onPress: () => void remove(e.id) },
+                Alert.alert(t("Delete entry"), t('Remove "{name}"?', { name: e.name }), [
+                  { text: t("Cancel"), style: "cancel" },
+                  { text: t("Delete"), style: "destructive", onPress: () => void remove(e.id) },
                 ])
               }
             />
@@ -102,7 +107,7 @@ export function DashboardScreen() {
         ) : (
           <Card>
             <Text style={{ color: colors.muted, textAlign: "center" }}>
-              No meals yet. Tap "+ Add food" to log your first meal.
+              {t('No meals yet. Tap "+ Add food" to log your first meal.')}
             </Text>
           </Card>
         )}
