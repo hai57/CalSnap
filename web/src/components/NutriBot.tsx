@@ -6,7 +6,6 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import styled, { css, keyframes } from 'styled-components';
 
 import type { DailySummary } from '@shared/types';
 
