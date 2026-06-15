@@ -1,3 +1,4 @@
+import { colors } from '@src/styles/theme';
 import { Center, Consumed, Goal, Remaining, Svg, Wrap } from './StMacroRing';
 
 interface MacroRingProps {
@@ -23,7 +24,7 @@ export function MacroRing({ consumed, goal, label = 'kcal' }: MacroRingProps) {
           cy="90"
           r={radius}
           fill="none"
-          stroke="#e2e8f0"
+          stroke={colors.track}
           strokeWidth={stroke}
         />
         <circle

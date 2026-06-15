@@ -9,6 +9,7 @@ import { BotProvider } from "./bot/BotContext";
 import { ToastProvider } from "./components/Toast";
 import { ThemeProvider } from "./theme/ThemeContext";
 import { LanguageProvider } from "./i18n";
+import { NavLayoutProvider } from "./layout/NavLayoutContext";
 import { Background } from "./styles/Background";
 import { GlobalStyle } from "./styles/global";
 
@@ -20,19 +21,21 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider>
       <LanguageProvider>
-        <GlobalStyle />
-        <Background />
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <ToastProvider>
-              <BotProvider>
-                <AuthProvider>
-                  <App />
-                </AuthProvider>
-              </BotProvider>
-            </ToastProvider>
-          </BrowserRouter>
-        </QueryClientProvider>
+        <NavLayoutProvider>
+          <GlobalStyle />
+          <Background />
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <ToastProvider>
+                <BotProvider>
+                  <AuthProvider>
+                    <App />
+                  </AuthProvider>
+                </BotProvider>
+              </ToastProvider>
+            </BrowserRouter>
+          </QueryClientProvider>
+        </NavLayoutProvider>
       </LanguageProvider>
     </ThemeProvider>
   </React.StrictMode>,

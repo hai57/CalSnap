@@ -166,7 +166,7 @@ export function ProfileScreen({ navigation }: { navigation: any }) {
         <ProfileRow
           first
           icon={<ScaleIcon size={20} color={colors.brandDark} />}
-          name={t('Current weight')}
+          name={t('Goal weight')}
           hint={t('Used for future goal recommendations.')}
         >
           <ValueField value={weight} onChangeText={setWeight} width={66} />

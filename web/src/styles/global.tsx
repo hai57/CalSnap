@@ -39,6 +39,11 @@ export const GlobalStyle = createGlobalStyle`
     --c-white: #ffffff;
     --c-surface: rgba(255, 255, 255, 0.85);
     --c-surface-border: rgba(15, 23, 42, 0.06);
+
+    --c-macro-protein: #3b82f6;
+    --c-macro-carbs: #f59e0b;
+    --c-macro-fat: #ef4444;
+    --c-track: #e2e8f0;
   }
 
   [data-theme="dark"] {
@@ -77,6 +82,11 @@ export const GlobalStyle = createGlobalStyle`
     --c-white: #141d2c;
     --c-surface: rgba(20, 29, 44, 0.72);
     --c-surface-border: rgba(255, 255, 255, 0.08);
+
+    --c-macro-protein: #60a5fa;
+    --c-macro-carbs: #fbbf24;
+    --c-macro-fat: #f87171;
+    --c-track: #334a68;
   }
 
   *,

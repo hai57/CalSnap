@@ -29,6 +29,12 @@ export const colors = {
   blue600: "var(--c-blue600)",
   blue700: "var(--c-blue700)",
   white: "var(--c-white)",
+  // Macro fill colors (brighten in dark mode for readability).
+  macroProtein: "var(--c-macro-protein)",
+  macroCarbs: "var(--c-macro-carbs)",
+  macroFat: "var(--c-macro-fat)",
+  // Progress/track background (tuned for contrast in both themes).
+  track: "var(--c-track)",
   // Always-light text/icon color for use on top of the brand/accent fills.
   onAccent: "#ffffff",
   // Translucent card surface + its hairline border.

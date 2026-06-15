@@ -25,7 +25,7 @@ export const Track = styled.div`
   width: 100%;
   overflow: hidden;
   border-radius: 9999px;
-  background: ${colors.slate200};
+  background: ${colors.track};
 `;
 
 export const Fill = styled.div`

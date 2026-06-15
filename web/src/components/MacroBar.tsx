@@ -1,5 +1,4 @@
-import { Label } from 'recharts';
-import { Fill, Head, Track, Value } from './StMacroBar';
+import { Fill, Head, Label, Track, Value } from './StMacroBar';
 
 interface MacroBarProps {
   label: string;

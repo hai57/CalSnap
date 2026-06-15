@@ -98,7 +98,7 @@ const VI: Record<string, string> = {
 
   // profile
   Basics: 'Cơ bản',
-  'Current weight': 'Cân nặng hiện tại',
+  'Goal weight': 'Cân nặng mong muốn',
   'Used for future goal recommendations.': 'Dùng cho gợi ý mục tiêu sau này.',
   'Daily calorie goal': 'Mục tiêu calo mỗi ngày',
   'Your target for the dashboard ring.': 'Mục tiêu cho vòng tròn tổng quan.',

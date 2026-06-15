@@ -9,6 +9,7 @@ import { useLang } from '../i18n';
 import { todayStr } from '../lib/date';
 import { formatTime } from '../lib/date';
 import { Card } from '../styles/ui';
+import { colors } from '../styles/theme';
 import {
   DeleteButton,
   EmptyLink,
@@ -84,19 +85,19 @@ export function Dashboard() {
             label={t('Protein')}
             value={totals.protein}
             goal={goal.protein_target}
-            color="#3b82f6"
+            color={colors.macroProtein}
           />
           <MacroBar
             label={t('Carbs')}
             value={totals.carbs}
             goal={goal.carb_target}
-            color="#f59e0b"
+            color={colors.macroCarbs}
           />
           <MacroBar
             label={t('Fat')}
             value={totals.fat}
             goal={goal.fat_target}
-            color="#ef4444"
+            color={colors.macroFat}
           />
         </MacroCard>
       </Grid>
@@ -118,7 +119,9 @@ export function Dashboard() {
         ) : (
           <EmptyState>
             <EmptyText>{t('No meals logged yet.')}</EmptyText>
-            <EmptyLink to="/add">{t('Snap or describe your first meal')}</EmptyLink>
+            <EmptyLink to="/add">
+              {t('Snap or describe your first meal')}
+            </EmptyLink>
           </EmptyState>
         )}
       </Card>

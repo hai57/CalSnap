@@ -19,6 +19,7 @@ import {
 import { api } from '../lib/api';
 import { useBot } from '../bot/BotContext';
 import { useLang, LanguageToggle } from '../i18n';
+import { NavLayoutToggle } from '../layout/NavLayoutContext';
 import { useToast } from '../components/Toast';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useHeaderAction } from '@src/components/LayoutAction';
@@ -297,7 +298,7 @@ export function Profile() {
                 <ScaleIcon size={20} />
               </IconChip>
               <RowLabel>
-                <RowName>{t('Current weight')}</RowName>
+                <RowName>{t('Goal weight')}</RowName>
                 <RowHint>{t('Used for future goal recommendations.')}</RowHint>
               </RowLabel>
             </RowMain>
@@ -506,6 +507,13 @@ export function Profile() {
             <RowHint>{t('System, light or dark.')}</RowHint>
           </RowLabel>
           <ThemeToggle />
+        </AppearanceRow>
+        <AppearanceRow>
+          <RowLabel>
+            <RowName>{t('Navigation')}</RowName>
+            <RowHint>{t('Top bar or side bar.')}</RowHint>
+          </RowLabel>
+          <NavLayoutToggle />
         </AppearanceRow>
         <AppearanceRow>
           <RowLabel>

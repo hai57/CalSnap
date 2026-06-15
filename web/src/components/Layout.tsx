@@ -1,28 +1,33 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useAuth } from '../auth/AuthContext';
 import { useLang } from '../i18n';
-import { PlusIcon } from './BaseIcons';
+import { useNavLayout } from '../layout/NavLayoutContext';
+import {
+  ChartIcon,
+  ChevronLeftIcon,
+  HomeIcon,
+  LogOutIcon,
+  PlusIcon,
+  UserIcon,
+} from './BaseIcons';
 import { colors } from '../styles/theme';
 import { PrimaryButton } from '../styles/ui';
 import { LayoutActionProvider, useLayoutActionSlot } from './LayoutAction';
 import { NutriBot } from './NutriBot';
 import {
   HeaderRight,
-  LogoutButton,
   Main,
   MobileNav,
   MobileNavItem,
   NavItem,
-  UserEmail,
 } from './StLayout';
 
 const navItems = [
-  { to: '/', label: 'Dashboard', end: true },
-  { to: '/history', label: 'Progress' },
-  { to: '/profile', label: 'Profile' },
+  { to: '/', label: 'Dashboard', end: true, Icon: HomeIcon },
+  { to: '/history', label: 'Progress', Icon: ChartIcon },
 ];
 
 const Shell = styled.div`
@@ -107,6 +112,354 @@ const AddButton = styled(PrimaryButton).attrs({ as: Link })`
   padding: 0.5rem 0.875rem;
 `;
 
+// ---- Sidebar layout ----
+
+const SideWrap = styled.div`
+  margin: 0 auto;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 80rem;
+`;
+
+const Aside = styled.aside<{ $collapsed: boolean }>`
+  display: none;
+
+  @media (min-width: 640px) {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    display: flex;
+    height: 100vh;
+    width: ${(p) => (p.$collapsed ? '4.75rem' : '15.5rem')};
+    flex-shrink: 0;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: ${(p) => (p.$collapsed ? '1.5rem 0.625rem' : '1.5rem 0.875rem')};
+    background: ${colors.surface};
+    border-right: 1px solid ${colors.surfaceBorder};
+    transition:
+      width 0.2s ease,
+      padding 0.2s ease;
+  }
+`;
+
+const AsideHead = styled.div<{ $collapsed: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: ${(p) => (p.$collapsed ? 'center' : 'flex-start')};
+`;
+
+const AsideBrand = styled(Brand)`
+  padding: 0 0.25rem;
+  overflow: hidden;
+`;
+
+// Floating circular toggle that straddles the sidebar's right edge.
+const EdgeToggle = styled.button<{ $collapsed: boolean }>`
+  position: absolute;
+  top: 1.625rem;
+  right: -1rem;
+  z-index: 5;
+  display: grid;
+  height: 2.25rem;
+  width: 2.25rem;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid ${colors.surfaceBorder};
+  background: ${colors.surface};
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: ${colors.slate500};
+  cursor: pointer;
+  box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.35);
+  opacity: 0.7;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease,
+    transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+
+  svg {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: rotate(${(p) => (p.$collapsed ? '180deg' : '0deg')});
+  }
+
+  &:hover {
+    opacity: 1;
+    color: ${colors.brand600};
+    border-color: ${colors.brand300};
+    transform: scale(1.08);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid ${colors.brand500};
+    outline-offset: 2px;
+  }
+`;
+
+const AsideNav = styled.nav`
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+`;
+
+const AsideNavItem = styled(NavLink)<{ $collapsed: boolean }>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  justify-content: ${(p) => (p.$collapsed ? 'center' : 'flex-start')};
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: ${colors.slate600};
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  svg {
+    color: ${colors.slate400};
+    transition: color 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: ${colors.slate100};
+    color: ${colors.slate900};
+  }
+  &:hover svg {
+    color: ${colors.slate600};
+  }
+
+  &.active {
+    background: ${colors.brand100};
+    color: ${colors.brand700};
+    font-weight: 600;
+  }
+  &.active svg {
+    color: ${colors.brand600};
+  }
+`;
+
+const AsideSpacer = styled.div`
+  flex: 1;
+`;
+
+const AsideFooter = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  align-items: stretch;
+  padding-top: 1rem;
+  border-top: 1px solid ${colors.surfaceBorder};
+`;
+
+const AccountWrap = styled.div`
+  position: relative;
+`;
+
+const AccountButton = styled.button<{
+  $collapsed: boolean;
+  $open: boolean;
+  $compact: boolean;
+}>`
+  display: flex;
+  width: ${(p) => (p.$compact ? 'auto' : '100%')};
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  border: ${(p) => (p.$compact ? `1px solid ${colors.slate200}` : 'none')};
+  border-radius: ${(p) => (p.$compact ? '999px' : '0.625rem')};
+  padding: ${(p) =>
+    p.$compact ? '0.25rem 0.5rem 0.25rem 0.25rem' : '0.375rem 0.5rem'};
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  background: ${(p) => (p.$open ? colors.slate100 : 'transparent')};
+  justify-content: ${(p) => (p.$collapsed ? 'center' : 'flex-start')};
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: ${colors.slate100};
+  }
+`;
+
+const AccountChevron = styled.span<{
+  $open: boolean;
+  $placement: 'up' | 'down';
+}>`
+  display: inline-flex;
+  margin-left: auto;
+  color: ${colors.slate400};
+
+  svg {
+    transition: transform 0.2s ease;
+    transform: rotate(
+      ${(p) => {
+        const pointsUp = p.$placement === 'up' ? !p.$open : p.$open;
+        return pointsUp ? '90deg' : '270deg';
+      }}
+    );
+  }
+`;
+
+const AccountText = styled.span`
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+`;
+
+const AccountName = styled.span`
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: ${colors.slate700};
+`;
+
+const Avatar = styled.div`
+  display: grid;
+  height: 2rem;
+  width: 2rem;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 999px;
+  background: ${colors.brand100};
+  color: ${colors.brand700};
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+`;
+
+const AsideEmail = styled.span`
+  font-size: 0.8rem;
+  color: ${colors.slate500};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const AccountMenu = styled.div<{
+  $collapsed: boolean;
+  $placement: 'up' | 'down';
+}>`
+  position: absolute;
+  ${(p) =>
+    p.$placement === 'up'
+      ? 'bottom: calc(100% + 0.375rem);'
+      : 'top: calc(100% + 0.375rem);'}
+  left: ${(p) => (p.$placement === 'up' ? '0' : 'auto')};
+  right: ${(p) =>
+    p.$placement === 'up' ? (p.$collapsed ? 'auto' : '0') : '0'};
+  min-width: ${(p) => (p.$placement === 'up' && !p.$collapsed ? '0' : '12rem')};
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.375rem;
+  border-radius: 0.75rem;
+  border: 1px solid ${colors.surfaceBorder};
+  background: ${colors.surface};
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.45);
+`;
+
+const accountMenuItem = `
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  color: ${colors.slate600};
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  svg {
+    color: ${colors.slate400};
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: ${colors.slate100};
+    color: ${colors.slate900};
+  }
+`;
+
+const AccountMenuLink = styled(NavLink)`
+  ${accountMenuItem}
+
+  &.active {
+    color: ${colors.brand700};
+  }
+  &.active svg {
+    color: ${colors.brand600};
+  }
+`;
+
+const AccountMenuButton = styled.button`
+  width: 100%;
+  ${accountMenuItem}
+`;
+
+const SideContent = styled.div`
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 0 1rem;
+
+  @media (min-width: 640px) {
+    padding: 1.5rem 2rem 0;
+  }
+`;
+
+// Plain (non-blur) top bar shown only on mobile when the sidebar is hidden.
+const MobileTopBar = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.1rem 0;
+
+  @media (min-width: 640px) {
+    display: none;
+  }
+`;
+
+// Desktop-only bar that keeps the page action (e.g. Save) on the right of the
+// content area in sidebar mode. Hidden on mobile (MobileTopBar covers it).
+const ContentActionBar = styled.div`
+  display: none;
+
+  @media (min-width: 640px) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 0 0 0.5rem;
+  }
+`;
+
 export function Layout({ children }: { children: ReactNode }) {
   return (
     <LayoutActionProvider>
@@ -115,12 +468,90 @@ export function Layout({ children }: { children: ReactNode }) {
   );
 }
 
-function LayoutShell({ children }: { children: ReactNode }) {
+// Avatar account menu shared by both layouts. `placement` controls whether it
+// opens up (sidebar footer) or down (top navbar). `collapsed` is only relevant
+// to the sidebar rail (icon-only avatar).
+function AccountDropdown({
+  placement,
+  collapsed = false,
+}: {
+  placement: 'up' | 'down';
+  collapsed?: boolean;
+}) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLang();
+  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  if (!user?.email) return null;
+
+  const compact = placement === 'down';
+  const showText = placement === 'up' && !collapsed;
+  const showChevron = !collapsed;
+
+  return (
+    <AccountWrap ref={ref}>
+      {open && (
+        <AccountMenu $collapsed={collapsed} $placement={placement}>
+          <AccountMenuLink to="/profile" onClick={() => setOpen(false)}>
+            <UserIcon size={16} />
+            {t('Profile')}
+          </AccountMenuLink>
+          <AccountMenuButton
+            type="button"
+            onClick={() => {
+              setOpen(false);
+              logout();
+              navigate('/login');
+            }}
+          >
+            <LogOutIcon size={16} />
+            {t('Log out')}
+          </AccountMenuButton>
+        </AccountMenu>
+      )}
+      <AccountButton
+        type="button"
+        $collapsed={collapsed}
+        $open={open}
+        $compact={compact}
+        onClick={() => setOpen((o) => !o)}
+        title={!showText ? user.email : undefined}
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <Avatar>{user.email.charAt(0)}</Avatar>
+        {showText && (
+          <AccountText>
+            <AccountName>{t('Account')}</AccountName>
+            <AsideEmail>{user.email}</AsideEmail>
+          </AccountText>
+        )}
+        {showChevron && (
+          <AccountChevron $open={open} $placement={placement}>
+            <ChevronLeftIcon size={16} />
+          </AccountChevron>
+        )}
+      </AccountButton>
+    </AccountWrap>
+  );
+}
+
+function LayoutShell({ children }: { children: ReactNode }) {
   const location = useLocation();
   const { action } = useLayoutActionSlot();
   const { t } = useLang();
+  const { layout, collapsed, toggleCollapsed } = useNavLayout();
   const onProfile = location.pathname.startsWith('/profile');
 
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -137,14 +568,110 @@ function LayoutShell({ children }: { children: ReactNode }) {
     return () => observer.disconnect();
   }, []);
 
+  const brand = (
+    <>
+      <BrandMark>N</BrandMark>
+      <BrandName>NutriLens</BrandName>
+    </>
+  );
+
+  const actions = (
+    <>
+      {action}
+      {!onProfile && (
+        <AddButton to="/add">
+          <PlusIcon size={16} />
+          {t('Add food')}
+        </AddButton>
+      )}
+      <AccountDropdown placement="down" />
+    </>
+  );
+
+  const mobileNav = (
+    <MobileNav>
+      {navItems.map((item) => (
+        <MobileNavItem key={item.to} to={item.to} end={item.end}>
+          {t(item.label)}
+        </MobileNavItem>
+      ))}
+    </MobileNav>
+  );
+
+  if (layout === 'sidebar') {
+    return (
+      <SideWrap>
+        <Aside $collapsed={collapsed}>
+          <EdgeToggle
+            type="button"
+            $collapsed={collapsed}
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? t('Expand menu') : t('Collapse menu')}
+            title={collapsed ? t('Expand menu') : t('Collapse menu')}
+          >
+            <ChevronLeftIcon size={18} />
+          </EdgeToggle>
+          <AsideHead $collapsed={collapsed}>
+            <AsideBrand>
+              <BrandMark>N</BrandMark>
+              {!collapsed && <BrandName>NutriLens</BrandName>}
+            </AsideBrand>
+          </AsideHead>
+          <AsideNav>
+            {navItems
+              .filter((item) => item.to !== '/profile')
+              .map((item) => (
+                <AsideNavItem
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  $collapsed={collapsed}
+                  title={collapsed ? t(item.label) : undefined}
+                >
+                  <item.Icon size={18} />
+                  {!collapsed && t(item.label)}
+                </AsideNavItem>
+              ))}
+          </AsideNav>
+          <AsideSpacer />
+          <AsideFooter>
+            <AccountDropdown placement="up" collapsed={collapsed} />
+          </AsideFooter>
+        </Aside>
+
+        <SideContent>
+          <MobileTopBar>
+            <Brand>{brand}</Brand>
+            <HeaderRight>{actions}</HeaderRight>
+          </MobileTopBar>
+
+          {(action || !onProfile) && (
+            <ContentActionBar>
+              {!onProfile && (
+                <AddButton to="/add">
+                  <PlusIcon size={16} />
+                  {t('Add food')}
+                </AddButton>
+              )}
+              {action}
+            </ContentActionBar>
+          )}
+
+          <Main>{children}</Main>
+
+          {mobileNav}
+        </SideContent>
+
+        <NutriBot side="left" />
+      </SideWrap>
+    );
+  }
+
   return (
     <Shell>
       <Sentinel ref={sentinelRef} />
       <Header $scrolled={scrolled}>
-        <Brand>
-          <BrandMark>N</BrandMark>
-          <BrandName>NutriLens</BrandName>
-        </Brand>
+        <Brand>{brand}</Brand>
         <DesktopNav>
           {navItems.map((item) => (
             <NavItem key={item.to} to={item.to} end={item.end}>
@@ -152,35 +679,12 @@ function LayoutShell({ children }: { children: ReactNode }) {
             </NavItem>
           ))}
         </DesktopNav>
-        <HeaderRight>
-          {action}
-          {!onProfile && (
-            <AddButton to="/add">
-              <PlusIcon size={16} />
-              {t('Add food')}
-            </AddButton>
-          )}
-          <UserEmail>{user?.email}</UserEmail>
-          <LogoutButton
-            onClick={() => {
-              logout();
-              navigate('/login');
-            }}
-          >
-            {t('Log out')}
-          </LogoutButton>
-        </HeaderRight>
+        <HeaderRight>{actions}</HeaderRight>
       </Header>
 
       <Main>{children}</Main>
 
-      <MobileNav>
-        {navItems.map((item) => (
-          <MobileNavItem key={item.to} to={item.to} end={item.end}>
-            {t(item.label)}
-          </MobileNavItem>
-        ))}
-      </MobileNav>
+      {mobileNav}
 
       <NutriBot />
     </Shell>

@@ -185,3 +185,56 @@ export function MonitorIcon(props: IconProps) {
     </svg>
   );
 }
+
+// Nav: Dashboard / home.
+export function HomeIcon(props: IconProps) {
+  return (
+    <svg {...base(props)} aria-hidden="true">
+      <path d="M3 10.5 12 3l9 7.5" />
+      <path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" />
+      <path d="M9.5 21v-6h5v6" />
+    </svg>
+  );
+}
+
+// Nav: Progress / chart.
+export function ChartIcon(props: IconProps) {
+  return (
+    <svg {...base(props)} aria-hidden="true">
+      <path d="M4 4v16h16" />
+      <path d="M8 16v-4" />
+      <path d="M12 16V8" />
+      <path d="M16 16v-6" />
+    </svg>
+  );
+}
+
+// Nav: Profile / user.
+export function UserIcon(props: IconProps) {
+  return (
+    <svg {...base(props)} aria-hidden="true">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </svg>
+  );
+}
+
+// Action: collapse sidebar (chevron pointing left).
+export function ChevronLeftIcon(props: IconProps) {
+  return (
+    <svg {...base(props)} aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+// Action: log out.
+export function LogOutIcon(props: IconProps) {
+  return (
+    <svg {...base(props)} aria-hidden="true">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <path d="M16 17l5-5-5-5" />
+      <path d="M21 12H9" />
+    </svg>
+  );
+}

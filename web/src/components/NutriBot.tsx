@@ -83,22 +83,26 @@ function prefersReducedMotion(): boolean {
   );
 }
 
-function cornerTarget() {
+type Side = 'left' | 'right';
+
+function cornerTarget(side: Side = 'right') {
   if (typeof window === 'undefined') return { x: 24, y: 24 };
   return {
-    x: window.innerWidth - BOT_W - MARGIN,
+    x: side === 'left' ? MARGIN : window.innerWidth - BOT_W - MARGIN,
     y: window.innerHeight - BOT_H - MARGIN,
   };
 }
 
-function randomTarget() {
-  const corner = cornerTarget();
-  const minX = Math.max(MARGIN, corner.x - ROAM_X);
+function randomTarget(side: Side = 'right') {
+  const corner = cornerTarget(side);
   const minY = Math.max(TOP_RESERVE, corner.y - ROAM_Y);
-  return {
-    x: minX + Math.random() * (corner.x - minX),
-    y: minY + Math.random() * (corner.y - minY),
-  };
+  const y = minY + Math.random() * (corner.y - minY);
+  if (side === 'left') {
+    const maxX = Math.min(window.innerWidth - BOT_W - MARGIN, corner.x + ROAM_X);
+    return { x: corner.x + Math.random() * (maxX - corner.x), y };
+  }
+  const minX = Math.max(MARGIN, corner.x - ROAM_X);
+  return { x: minX + Math.random() * (corner.x - minX), y };
 }
 
 function deriveState(data: DailySummary | undefined, t: TFn): BotState {
@@ -217,13 +221,13 @@ function answerFor(id: string, data: DailySummary | undefined, t: TFn): string {
   }
 }
 
-export function NutriBot() {
+export function NutriBot({ side = 'right' }: { side?: Side }) {
   const { enabled, setEnabled } = useBot();
   if (!enabled) return <SadBox onWake={() => setEnabled(true)} />;
-  return <RoamingBot />;
+  return <RoamingBot side={side} />;
 }
 
-function RoamingBot() {
+function RoamingBot({ side }: { side: Side }) {
   const { t } = useLang();
   const day = todayStr();
   const { data } = useQuery<DailySummary>({
@@ -234,7 +238,7 @@ function RoamingBot() {
 
   const reduced = useRef(prefersReducedMotion());
   const [pos, setPos] = useState(() =>
-    reduced.current ? cornerTarget() : randomTarget(),
+    reduced.current ? cornerTarget(side) : randomTarget(side),
   );
   const [facingLeft, setFacingLeft] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -276,20 +280,20 @@ function RoamingBot() {
     const id = window.setInterval(() => {
       if (paused) return;
       setPos((prev) => {
-        const next = randomTarget();
+        const next = randomTarget(side);
         setFacingLeft(next.x < prev.x);
         return next;
       });
     }, MOVE_MS);
     return () => window.clearInterval(id);
-  }, [paused]);
+  }, [paused, side]);
 
   useEffect(() => {
     const onResize = () =>
-      setPos(reduced.current ? cornerTarget() : randomTarget());
+      setPos(reduced.current ? cornerTarget(side) : randomTarget(side));
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, []);
+  }, [side]);
 
   // Rotate the status message shown on hover (no auto popup when idle).
   useEffect(() => {
