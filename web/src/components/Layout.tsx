@@ -6,8 +6,8 @@ import { useAuth } from '../auth/AuthContext';
 import { useLang } from '../i18n';
 import { useNavLayout } from '../layout/NavLayoutContext';
 import {
-  ChartIcon,
   ChevronLeftIcon,
+  HeadphonesIcon,
   HomeIcon,
   LogOutIcon,
   PlusIcon,
@@ -27,7 +27,7 @@ import {
 
 const navItems = [
   { to: '/', label: 'Dashboard', end: true, Icon: HomeIcon },
-  { to: '/history', label: 'Progress', Icon: ChartIcon },
+  { to: '/focus', label: 'Focus', Icon: HeadphonesIcon },
 ];
 
 const Shell = styled.div`
@@ -280,7 +280,7 @@ const AccountButton = styled.button<{
   border: ${(p) => (p.$compact ? `1px solid ${colors.slate200}` : 'none')};
   border-radius: ${(p) => (p.$compact ? '999px' : '0.625rem')};
   padding: ${(p) =>
-    p.$compact ? '0.25rem 0.5rem 0.25rem 0.25rem' : '0.375rem 0.5rem'};
+    p.$compact ? '0.25rem 0.75rem 0.25rem 0.25rem' : '0.375rem 0.5rem'};
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -361,7 +361,7 @@ const AccountMenu = styled.div<{
   left: ${(p) => (p.$placement === 'up' ? '0' : 'auto')};
   right: ${(p) =>
     p.$placement === 'up' ? (p.$collapsed ? 'auto' : '0') : '0'};
-  min-width: ${(p) => (p.$placement === 'up' && !p.$collapsed ? '0' : '12rem')};
+  min-width: ${(p) => (p.$placement === 'up' && !p.$collapsed ? '0' : '100%')};
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -496,7 +496,7 @@ function AccountDropdown({
   if (!user?.email) return null;
 
   const compact = placement === 'down';
-  const showText = placement === 'up' && !collapsed;
+  const showText = !collapsed;
   const showChevron = !collapsed;
 
   return (

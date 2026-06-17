@@ -13,6 +13,9 @@ export const HeaderRow = styled.div`
 
 export const EditGoalsButton = styled(SecondaryButton).attrs({ as: Link })`
   text-decoration: none;
+  &:hover {
+    background-color: ${colors.brand500};
+  }
 `;
 
 export const StatGrid = styled.div`
@@ -32,7 +35,9 @@ export const StatValue = styled.p`
 `;
 
 export const GoalStatCard = styled(Card).attrs({ as: Link })`
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
@@ -53,4 +58,12 @@ export const GoalStatCard = styled(Card).attrs({ as: Link })`
 export const ChartWrap = styled.div`
   height: 18rem;
   width: 100%;
+
+  @media (min-width: 1280px) {
+    height: 24rem;
+  }
+
+  @media (min-width: 1536px) {
+    height: 28rem;
+  }
 `;

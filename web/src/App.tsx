@@ -7,8 +7,8 @@ import { useLang } from './i18n';
 import type { ReactNode } from 'react';
 import { AddEntry } from './pages/AddEntry';
 import { Dashboard } from './pages/Dashboard';
+import { Focus } from './pages/Focus';
 import { Goals } from './pages/Goals';
-import { History } from './pages/History';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
@@ -74,11 +74,12 @@ export default function App() {
           </Protected>
         }
       />
+      <Route path="/history" element={<Navigate to="/" replace />} />
       <Route
-        path="/history"
+        path="/focus"
         element={
           <Protected>
-            <History />
+            <Focus />
           </Protected>
         }
       />

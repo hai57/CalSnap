@@ -15,6 +15,7 @@ export const HeaderRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 `;
 
 export const Grid = styled.div`
@@ -24,6 +25,40 @@ export const Grid = styled.div`
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+`;
+
+// Progress block: on wide screens the stats sit in a narrow left column and the
+// weekly chart stretches across the remaining width.
+export const ProgressGrid = styled.div`
+  display: grid;
+  gap: 1.5rem;
+
+  @media (min-width: 1280px) {
+    grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+    align-items: stretch;
+  }
+`;
+
+export const StatColumn = styled.div`
+  display: grid;
+  gap: 1rem;
+
+  @media (min-width: 640px) and (max-width: 1279px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (min-width: 1280px) {
+    height: 100%;
+    grid-auto-rows: 1fr;
+  }
+`;
+
+// Stat tile that fills its grid cell and centers its content, so the stat
+// column stays the same height as the chart card beside it.
+export const StatCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 export const RingCard = styled(Card)`
