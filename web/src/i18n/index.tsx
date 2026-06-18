@@ -197,6 +197,85 @@ const VI: Record<string, string> = {
   Work: 'Làm việc',
   'Short break': 'Nghỉ ngắn',
   'Long break': 'Nghỉ dài',
+
+  // workout
+  Workout: 'Tập luyện',
+  'Train with intent.': 'Tập luyện có chủ đích.',
+  Train: 'Rèn luyện',
+  'Move with intent — interval by interval.':
+    'Vận động có chủ đích — theo từng hiệp.',
+  Ready: 'Sẵn sàng',
+  'Work!': 'Cố lên!',
+  Rest: 'Nghỉ',
+  Done: 'Hoàn thành',
+  Skip: 'Bỏ qua',
+  'Round {n}/{total}': 'Hiệp {n}/{total}',
+  Tabata: 'Tabata',
+  HIIT: 'HIIT',
+  EMOM: 'EMOM',
+  'Quick burn': 'Đốt nhanh',
+  Session: 'Buổi tập',
+  "Today's exercises": 'Bài tập hôm nay',
+  'e.g. Push-ups': 'vd: Hít đất',
+  'Exercise name': 'Tên bài tập',
+  '3 × 12': '3 × 12',
+  'Sets and reps': 'Set và số lần',
+  'Toggle exercise': 'Đổi trạng thái bài tập',
+  'No exercises yet — build your session above.':
+    'Chưa có bài tập — tạo buổi tập ở trên.',
+  'Tip: pick a preset, press start, and move with the timer.':
+    'Mẹo: chọn mẫu, nhấn bắt đầu và tập theo đồng hồ.',
+
+  // workout modes & programs
+  'Quick session': 'Tập nhanh',
+  'Training programs': 'Chương trình tập',
+  'Workout mode': 'Chế độ tập',
+  Programs: 'Chương trình',
+  'Training lectures': 'Bài giảng tập luyện',
+  'Guided workouts with meal pairings — optional Pro plans.':
+    'Tập có hướng dẫn kèm gợi ý bữa ăn — gói Pro tùy chọn.',
+  'Use free programs anytime, or unlock Pro for coach-led plans with specific workouts and meals. Skip this entirely and stay on Quick session if you prefer.':
+    'Dùng chương trình miễn phí bất cứ lúc nào, hoặc mở Pro để có lộ trình coach với bài tập và bữa ăn cụ thể. Không muốn thì cứ dùng Tập nhanh.',
+  Free: 'Miễn phí',
+  Pro: 'Pro',
+  weeks: 'tuần',
+  'days/week': 'ngày/tuần',
+  Coach: 'Huấn luyện viên',
+  'All programs': 'Tất cả chương trình',
+  Meals: 'Bữa ăn',
+  'Start this session': 'Bắt đầu buổi này',
+  'Loaded: {label}': 'Đã tải: {label}',
+  'Clear plan': 'Xóa kế hoạch',
+  'NutriLens Pro Training': 'NutriLens Pro Training',
+  'Unlock "{title}" and all Pro lectures.':
+    'Mở khóa "{title}" và toàn bộ bài giảng Pro.',
+  'Structured multi-week workout plans': 'Lộ trình tập nhiều tuần',
+  'Meal suggestions matched to each session':
+    'Gợi ý bữa ăn khớp từng buổi tập',
+  'Macro targets aligned with your nutrition goals':
+    'Macro phù hợp mục tiêu dinh dưỡng của bạn',
+  'Unlock Pro (demo)': 'Mở Pro (demo)',
+  'Not now — keep using free tools':
+    'Để sau — tiếp tục dùng miễn phí',
+  'Starter bodyweight': 'Bodyweight cơ bản',
+  'No equipment. Build the habit in one week.':
+    'Không cần dụng cụ. Xây thói quen trong một tuần.',
+  'Lean & defined': 'Gọn & săn chắc',
+  'Structured HIIT + high-protein meal pairings.':
+    'HIIT có cấu trúc + bữa ăn giàu đạm.',
+  'Strength foundations': 'Nền tảng sức mạnh',
+  'Progressive overload with gym or dumbbells.':
+    'Tăng tải dần với gym hoặc tạ tay.',
+  'Fat loss kickstart': 'Khởi động giảm mỡ',
+  'Calorie-aware training with daily meal targets.':
+    'Tập theo calo với mục tiêu bữa ăn hàng ngày.',
+  Breakfast: 'Bữa sáng',
+  Lunch: 'Bữa trưa',
+  Dinner: 'Bữa tối',
+  Snack: 'Ăn nhẹ',
+  'Pre-workout': 'Trước tập',
+  'Post-workout': 'Sau tập',
+  'Before bed': 'Trước ngủ',
   'Lofi radio': 'Radio lofi',
   'Deep Focus': 'Tập trung sâu',
   'Peaceful Piano': 'Piano thư giãn',

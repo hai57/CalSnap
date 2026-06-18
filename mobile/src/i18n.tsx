@@ -127,8 +127,110 @@ const VI: Record<string, string> = {
   'Profile updated': 'Đã cập nhật hồ sơ',
   "Couldn't save": 'Không thể lưu',
   Account: 'Tài khoản',
+  Dashboard: 'Tổng quan',
+  Focus: 'Tập trung',
+  Workout: 'Tập luyện',
+  'Your sanctuary.': 'Không gian tập trung của bạn.',
+  'Search the web, code, or videos…': 'Tìm web, code hoặc video…',
+  Search: 'Tìm kiếm',
+  Work: 'Làm việc',
+  Spotify: 'Spotify',
+  YouTube: 'YouTube',
+  Coding: 'Lập trình',
+  'Good morning': 'Chào buổi sáng',
+  'Good afternoon': 'Chào buổi chiều',
+  'Good evening': 'Chào buổi tối',
+  'Now playing': 'Đang phát',
+  'Paste a Spotify track / playlist / album link':
+    'Dán link bài hát / playlist / album Spotify',
+  'Paste a valid Spotify track / playlist / album link.':
+    'Dán link Spotify hợp lệ (bài hát / playlist / album).',
+  'Tip: Spotify → Share → Copy link, then paste above.':
+    'Mẹo: Spotify → Chia sẻ → Sao chép link, rồi dán vào ô trên.',
+  'Lo-fi rooms, focus mixes, ambient streams.':
+    'Phòng lofi, nhạc tập trung, stream ambient.',
+  'On Air': 'Đang phát',
+  Stations: 'Kênh',
+  'Tip: pick a station above to start the stream.':
+    'Mẹo: chọn kênh bên trên để bắt đầu phát.',
+  'Lofi radio': 'Radio lofi',
+  'Deep Focus': 'Tập trung sâu',
+  'Peaceful Piano': 'Piano thư giãn',
+  'Nature sounds': 'Âm thanh thiên nhiên',
+  Load: 'Tải',
+  Go: 'Đi',
+  Ready: 'Sẵn sàng',
+  Add: 'Thêm',
+  'Quick links': 'Liên kết nhanh',
+  'Name (e.g. Jira)': 'Tên (vd: Jira)',
+  'To-do': 'Việc cần làm',
+  'What needs doing today?': 'Hôm nay cần làm gì?',
+  'All clear. Add a task above.': 'Trống trơn. Thêm việc ở trên.',
+  Notes: 'Ghi chú',
+  'Jot down anything — saved to this browser.':
+    'Ghi lại bất cứ điều gì — lưu trên thiết bị.',
+  'Stack Overflow': 'Stack Overflow',
+  'e.g. dependency injection scope':
+    'vd: phạm vi dependency injection',
+  'Dev quick-search': 'Tìm nhanh cho dev',
+  'Search query…': 'Nội dung tìm kiếm…',
+  'Snippet scratchpad': 'Sổ tay đoạn mã',
+  'Stash code snippets, commands, regexes…':
+    'Lưu đoạn mã, lệnh, regex…',
+  'Short break': 'Nghỉ ngắn',
+  'Long break': 'Nghỉ dài',
+  'Train with intent.': 'Tập luyện có chủ đích.',
+  Train: 'Rèn luyện',
+  'Quick session': 'Tập nhanh',
+  'Training programs': 'Chương trình tập',
+  'Move with intent — interval by interval.':
+    'Vận động có chủ đích — theo từng hiệp.',
+  'Work!': 'Cố lên!',
+  Rest: 'Nghỉ',
+  Done: 'Hoàn thành',
+  'Round {n}/{total}': 'Hiệp {n}/{total}',
+  Tabata: 'Tabata',
+  HIIT: 'HIIT',
+  EMOM: 'EMOM',
+  'Quick burn': 'Đốt nhanh',
+  "Today's exercises": 'Bài tập hôm nay',
+  'e.g. Push-ups': 'vd: Hít đất',
+  '3 × 12': '3 × 12',
+  'No exercises yet — build your session above.':
+    'Chưa có bài tập — tạo buổi tập ở trên.',
+  'Loaded: {label}': 'Đã tải: {label}',
+  'Clear plan': 'Xóa kế hoạch',
+  'Training lectures': 'Bài giảng tập luyện',
+  'Guided workouts with meal pairings — optional Pro plans.':
+    'Tập có hướng dẫn kèm gợi ý bữa ăn — gói Pro tùy chọn.',
+  Free: 'Miễn phí',
+  Pro: 'Pro',
+  weeks: 'tuần',
+  'days/week': 'ngày/tuần',
+  Coach: 'Huấn luyện viên',
+  'All programs': 'Tất cả chương trình',
+  Meals: 'Bữa ăn',
+  'Start this session': 'Bắt đầu buổi này',
+  'NutriLens Pro Training': 'NutriLens Pro Training',
+  'Unlock "{title}" and all Pro lectures.':
+    'Mở khóa "{title}" và toàn bộ bài giảng Pro.',
+  'Unlock Pro (demo)': 'Mở Pro (demo)',
+  'Not now — keep using free tools':
+    'Để sau — tiếp tục dùng miễn phí',
+  'Starter bodyweight': 'Bodyweight cơ bản',
+  'No equipment. Build the habit in one week.':
+    'Không cần dụng cụ. Xây thói quen trong một tuần.',
+  'Lean & defined': 'Gọn & săn chắc',
+  'Structured HIIT + high-protein meal pairings.':
+    'HIIT có cấu trúc + bữa ăn giàu đạm.',
+  'Strength foundations': 'Nền tảng sức mạnh',
+  'Progressive overload with gym or dumbbells.':
+    'Tăng tải dần với gym hoặc tạ tay.',
+  'Fat loss kickstart': 'Khởi động giảm mỡ',
+  'Calorie-aware training with daily meal targets.':
+    'Tập luyện theo calo kèm mục tiêu bữa ăn hằng ngày.',
 
-  // diet presets
+  // NutriBot
   Balanced: 'Cân bằng',
   'Even macro split, great for everyday maintenance.':
     'Tỉ lệ macro đều, hợp duy trì hằng ngày.',

@@ -85,24 +85,93 @@ function prefersReducedMotion(): boolean {
 
 type Side = 'left' | 'right';
 
-function cornerTarget(side: Side = 'right') {
-  if (typeof window === 'undefined') return { x: 24, y: 24 };
+const AVOID_PAD = 28;
+
+function getAvoidRects(): DOMRect[] {
+  if (typeof document === 'undefined') return [];
+  return Array.from(
+    document.querySelectorAll<HTMLElement>('[data-bot-avoid]'),
+  )
+    .map((el) => el.getBoundingClientRect())
+    .filter((r) => r.width > 0 && r.height > 0);
+}
+
+function overlapsAvoid(x: number, y: number, rects: DOMRect[]): boolean {
+  return rects.some(
+    (r) =>
+      x + BOT_W > r.left - AVOID_PAD &&
+      x < r.right + AVOID_PAD &&
+      y + BOT_H > r.top - AVOID_PAD &&
+      y < r.bottom + AVOID_PAD,
+  );
+}
+
+function safePosition(
+  pos: { x: number; y: number },
+  side: Side,
+): { x: number; y: number } {
+  if (typeof window === 'undefined') return pos;
+  const rects = getAvoidRects();
+  if (rects.length === 0 || !overlapsAvoid(pos.x, pos.y, rects)) return pos;
+
+  const maxY = window.innerHeight - BOT_H - MARGIN;
+  const maxX = window.innerWidth - BOT_W - MARGIN;
+  let { x, y } = pos;
+
+  for (let i = 0; i < 6; i++) {
+    let highest = Infinity;
+    for (const r of rects) {
+      if (
+        x + BOT_W > r.left - AVOID_PAD &&
+        x < r.right + AVOID_PAD &&
+        y + BOT_H > r.top - AVOID_PAD &&
+        y < r.bottom + AVOID_PAD
+      ) {
+        highest = Math.min(highest, r.top - AVOID_PAD - BOT_H);
+      }
+    }
+    if (highest === Infinity) return { x, y };
+
+    if (highest >= TOP_RESERVE) {
+      y = highest;
+    } else {
+      x = side === 'left' ? Math.min(maxX, x + 90) : Math.max(MARGIN, x - 90);
+      y = maxY;
+    }
+    if (!overlapsAvoid(x, y, rects)) return { x, y };
+  }
+
   return {
-    x: side === 'left' ? MARGIN : window.innerWidth - BOT_W - MARGIN,
-    y: window.innerHeight - BOT_H - MARGIN,
+    x: side === 'left' ? maxX : MARGIN,
+    y: maxY,
   };
 }
 
+function cornerTarget(side: Side = 'right') {
+  if (typeof window === 'undefined') return { x: 24, y: 24 };
+  const base = {
+    x: side === 'left' ? MARGIN : window.innerWidth - BOT_W - MARGIN,
+    y: window.innerHeight - BOT_H - MARGIN,
+  };
+  return safePosition(base, side);
+}
+
 function randomTarget(side: Side = 'right') {
-  const corner = cornerTarget(side);
+  const corner = {
+    x: side === 'left' ? MARGIN : window.innerWidth - BOT_W - MARGIN,
+    y: window.innerHeight - BOT_H - MARGIN,
+  };
   const minY = Math.max(TOP_RESERVE, corner.y - ROAM_Y);
   const y = minY + Math.random() * (corner.y - minY);
+  let x: number;
   if (side === 'left') {
     const maxX = Math.min(window.innerWidth - BOT_W - MARGIN, corner.x + ROAM_X);
-    return { x: corner.x + Math.random() * (maxX - corner.x), y };
+    x = corner.x + Math.random() * (maxX - corner.x);
+  } else {
+    const minX = Math.max(MARGIN, corner.x - ROAM_X);
+    x = minX + Math.random() * (corner.x - minX);
   }
-  const minX = Math.max(MARGIN, corner.x - ROAM_X);
-  return { x: minX + Math.random() * (corner.x - minX), y };
+  return safePosition({ x, y }, side);
 }
 
 function deriveState(data: DailySummary | undefined, t: TFn): BotState {
@@ -251,6 +320,8 @@ function RoamingBot({ side }: { side: Side }) {
   const [dragging, setDragging] = useState(false);
   const [moved, setMoved] = useState(false);
   const [annoyed, setAnnoyed] = useState(false);
+  const [avoiding, setAvoiding] = useState(false);
+  const avoidTimer = useRef<number | null>(null);
   const dragOffset = useRef({ x: 0, y: 0 });
   const dragStart = useRef({ x: 0, y: 0 });
   const movedRef = useRef(false);
@@ -294,6 +365,33 @@ function RoamingBot({ side }: { side: Side }) {
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, [side]);
+
+  useEffect(() => {
+    if (dragging) return;
+    const reposition = () => {
+      setPos((prev) => {
+        const safe = safePosition(prev, side);
+        if (safe.x === prev.x && safe.y === prev.y) return prev;
+        setFacingLeft(safe.x < prev.x);
+        setAvoiding(true);
+        if (avoidTimer.current != null)
+          window.clearTimeout(avoidTimer.current);
+        avoidTimer.current = window.setTimeout(() => {
+          setAvoiding(false);
+          avoidTimer.current = null;
+        }, 650);
+        return safe;
+      });
+    };
+    window.addEventListener('bot:avoid-changed', reposition);
+    return () => {
+      window.removeEventListener('bot:avoid-changed', reposition);
+      if (avoidTimer.current != null) {
+        window.clearTimeout(avoidTimer.current);
+        avoidTimer.current = null;
+      }
+    };
+  }, [side, dragging]);
 
   // Rotate the status message shown on hover (no auto popup when idle).
   useEffect(() => {
@@ -402,6 +500,7 @@ function RoamingBot({ side }: { side: Side }) {
         style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
         $reduced={reduced.current}
         $dragging={dragging}
+        $avoiding={avoiding}
       >
         <Anchor
           onMouseEnter={() => setHovered(true)}

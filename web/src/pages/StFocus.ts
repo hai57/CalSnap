@@ -325,6 +325,48 @@ export const Panel = styled.div`
   gap: 1.25rem;
 `;
 
+export const TintedPanel = styled.div<{ $accent: string }>`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid
+    color-mix(in srgb, ${(p) => p.$accent} 22%, transparent);
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 0% 0%,
+      color-mix(in srgb, ${(p) => p.$accent} 14%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 100% 100%,
+      color-mix(in srgb, ${(p) => p.$accent} 8%, transparent),
+      transparent 50%
+    ),
+    var(--focus-surface-solid);
+  box-shadow:
+    var(--focus-shadow),
+    0 0 0 1px color-mix(in srgb, ${(p) => p.$accent} 6%, transparent) inset;
+
+  [data-theme='dark'] & {
+    border-color: color-mix(in srgb, ${(p) => p.$accent} 18%, transparent);
+    background:
+      radial-gradient(
+        ellipse 80% 60% at 0% 0%,
+        color-mix(in srgb, ${(p) => p.$accent} 10%, transparent),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 100% 100%,
+        color-mix(in srgb, ${(p) => p.$accent} 6%, transparent),
+        transparent 50%
+      ),
+      var(--focus-surface-solid);
+  }
+`;
+
 export const Grid = styled.div`
   display: grid;
   gap: 1.25rem;

@@ -14,27 +14,22 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from './src/auth';
 import { BotProvider, NutriBot } from './src/bot';
 import { LanguageProvider, useLang } from './src/i18n';
-import { PlusIcon } from './src/icons';
+import { PlusIcon, HomeIcon, HeadphonesIcon, DumbbellIcon } from './src/icons';
 import { ThemeProvider, useTheme } from './src/themeContext';
 import { ToastProvider } from './src/toast';
 import { colors } from './src/theme';
 import { AddScreen } from './src/screens/AddScreen';
 import { DashboardScreen } from './src/screens/DashboardScreen';
 import { GoalsScreen } from './src/screens/GoalsScreen';
-import { HistoryScreen } from './src/screens/HistoryScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
+import { FocusScreen } from './src/screens/FocusScreen';
+import { WorkoutScreen } from './src/screens/WorkoutScreen';
 
 const AuthStack = createNativeStackNavigator();
 const AppStack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
-
-function TabIcon({ label, focused }: { label: string; focused: boolean }) {
-  return (
-    <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>{label}</Text>
-  );
-}
 
 function AddFoodButton({ onPress }: { onPress: () => void }) {
   const { t } = useLang();
@@ -58,6 +53,16 @@ function AddFoodButton({ onPress }: { onPress: () => void }) {
   );
 }
 
+function TabIcon({
+  focused,
+  children,
+}: {
+  focused: boolean;
+  children: React.ReactNode;
+}) {
+  return <View style={{ opacity: focused ? 1 : 0.45 }}>{children}</View>;
+}
+
 function AppTabs() {
   const { t } = useLang();
   return (
@@ -79,19 +84,39 @@ function AppTabs() {
       })}
     >
       <Tabs.Screen
-        name="Today"
+        name="Dashboard"
         component={DashboardScreen}
         options={{
-          title: t('Today'),
-          tabBarIcon: ({ focused }) => <TabIcon label="🏠" focused={focused} />,
+          title: t('Dashboard'),
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon focused={focused}>
+              <HomeIcon size={22} color={color} />
+            </TabIcon>
+          ),
         }}
       />
       <Tabs.Screen
-        name="Progress"
-        component={HistoryScreen}
+        name="Focus"
+        component={FocusScreen}
         options={{
-          title: t('Progress'),
-          tabBarIcon: ({ focused }) => <TabIcon label="📊" focused={focused} />,
+          title: t('Focus'),
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon focused={focused}>
+              <HeadphonesIcon size={22} color={color} />
+            </TabIcon>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Workout"
+        component={WorkoutScreen}
+        options={{
+          title: t('Workout'),
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon focused={focused}>
+              <DumbbellIcon size={22} color={color} />
+            </TabIcon>
+          ),
         }}
       />
       <Tabs.Screen
@@ -100,7 +125,11 @@ function AppTabs() {
         options={{
           title: t('Profile'),
           headerRight: () => null,
-          tabBarIcon: ({ focused }) => <TabIcon label="⚙️" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <TabIcon focused={focused}>
+              <Text style={{ fontSize: 20, color }}>⚙️</Text>
+            </TabIcon>
+          ),
         }}
       />
     </Tabs.Navigator>

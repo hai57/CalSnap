@@ -51,10 +51,10 @@ export function Focus() {
   };
 
   const TABS: { id: TabId; label: string }[] = [
+    { id: 'work', label: 'Work' },
     { id: 'spotify', label: 'Spotify' },
     { id: 'youtube', label: 'YouTube' },
     { id: 'coding', label: 'Coding' },
-    { id: 'work', label: 'Work' },
   ];
 
   return (
@@ -111,6 +111,9 @@ export function Focus() {
       </Toolbar>
 
       <PanelStage>
+        <PanelSlot $active={tab === 'work'} aria-hidden={tab !== 'work'}>
+          <WorkPanel />
+        </PanelSlot>
         <PanelSlot $active={tab === 'spotify'} aria-hidden={tab !== 'spotify'}>
           <SpotifyPanel />
         </PanelSlot>
@@ -119,9 +122,6 @@ export function Focus() {
         </PanelSlot>
         <PanelSlot $active={tab === 'coding'} aria-hidden={tab !== 'coding'}>
           <CodingPanel />
-        </PanelSlot>
-        <PanelSlot $active={tab === 'work'} aria-hidden={tab !== 'work'}>
-          <WorkPanel />
         </PanelSlot>
       </PanelStage>
     </Shell>

@@ -7,6 +7,7 @@ import { useLang } from '../i18n';
 import { useNavLayout } from '../layout/NavLayoutContext';
 import {
   ChevronLeftIcon,
+  DumbbellIcon,
   HeadphonesIcon,
   HomeIcon,
   LogOutIcon,
@@ -28,6 +29,7 @@ import {
 const navItems = [
   { to: '/', label: 'Dashboard', end: true, Icon: HomeIcon },
   { to: '/focus', label: 'Focus', Icon: HeadphonesIcon },
+  { to: '/workout', label: 'Workout', Icon: DumbbellIcon },
 ];
 
 const Shell = styled.div`
@@ -48,9 +50,9 @@ const Header = styled.header<{ $scrolled: boolean }>`
   position: sticky;
   top: 0;
   z-index: 30;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 1.1rem 1rem;
   margin: 0 -1rem;
   border-bottom: 1px solid
@@ -66,6 +68,21 @@ const Header = styled.header<{ $scrolled: boolean }>`
     backdrop-filter 0.25s ease,
     border-color 0.25s ease,
     box-shadow 0.25s ease;
+`;
+
+const HeaderStart = styled.div`
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  min-width: 0;
+`;
+
+const HeaderEnd = styled.div`
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  justify-content: flex-end;
+  min-width: 0;
 `;
 
 const Brand = styled.div`
@@ -96,6 +113,7 @@ const BrandName = styled.span`
 const DesktopNav = styled.nav`
   display: none;
   align-items: center;
+  justify-self: center;
   gap: 0.25rem;
 
   @media (min-width: 640px) {
@@ -131,11 +149,11 @@ const Aside = styled.aside<{ $collapsed: boolean }>`
     align-self: flex-start;
     display: flex;
     height: 100vh;
-    width: ${(p) => (p.$collapsed ? '4.75rem' : '15.5rem')};
+    width: ${(p) => (p.$collapsed ? '4.25rem' : '13.5rem')};
     flex-shrink: 0;
     flex-direction: column;
     gap: 1.25rem;
-    padding: ${(p) => (p.$collapsed ? '1.5rem 0.625rem' : '1.5rem 0.875rem')};
+    padding: ${(p) => (p.$collapsed ? '1.5rem 0.5rem' : '1.5rem 0.75rem')};
     background: ${colors.surface};
     border-right: 1px solid ${colors.surfaceBorder};
     transition:
@@ -158,7 +176,7 @@ const AsideBrand = styled(Brand)`
 // Floating circular toggle that straddles the sidebar's right edge.
 const EdgeToggle = styled.button<{ $collapsed: boolean }>`
   position: absolute;
-  top: 1.625rem;
+  top: 50%;
   right: -1rem;
   z-index: 5;
   display: grid;
@@ -174,6 +192,7 @@ const EdgeToggle = styled.button<{ $collapsed: boolean }>`
   cursor: pointer;
   box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.35);
   opacity: 0.7;
+  transform: translateY(-50%);
   transition:
     color 0.15s ease,
     border-color 0.15s ease,
@@ -189,11 +208,11 @@ const EdgeToggle = styled.button<{ $collapsed: boolean }>`
     opacity: 1;
     color: ${colors.brand600};
     border-color: ${colors.brand300};
-    transform: scale(1.08);
+    transform: translateY(-50%) scale(1.08);
   }
 
   &:active {
-    transform: scale(0.92);
+    transform: translateY(-50%) scale(0.92);
   }
 
   &:focus-visible {
@@ -493,6 +512,10 @@ function AccountDropdown({
     return () => document.removeEventListener('mousedown', onDown);
   }, [open]);
 
+  useEffect(() => {
+    window.dispatchEvent(new Event('bot:avoid-changed'));
+  }, [open]);
+
   if (!user?.email) return null;
 
   const compact = placement === 'down';
@@ -500,9 +523,13 @@ function AccountDropdown({
   const showChevron = !collapsed;
 
   return (
-    <AccountWrap ref={ref}>
+    <AccountWrap ref={ref} data-bot-avoid="">
       {open && (
-        <AccountMenu $collapsed={collapsed} $placement={placement}>
+        <AccountMenu
+          $collapsed={collapsed}
+          $placement={placement}
+          data-bot-avoid=""
+        >
           <AccountMenuLink to="/profile" onClick={() => setOpen(false)}>
             <UserIcon size={16} />
             {t('Profile')}
@@ -552,7 +579,7 @@ function LayoutShell({ children }: { children: ReactNode }) {
   const { action } = useLayoutActionSlot();
   const { t } = useLang();
   const { layout, collapsed, toggleCollapsed } = useNavLayout();
-  const onProfile = location.pathname.startsWith('/profile');
+  const onHome = location.pathname === '/';
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -578,7 +605,7 @@ function LayoutShell({ children }: { children: ReactNode }) {
   const actions = (
     <>
       {action}
-      {!onProfile && (
+      {onHome && (
         <AddButton to="/add">
           <PlusIcon size={16} />
           {t('Add food')}
@@ -645,9 +672,9 @@ function LayoutShell({ children }: { children: ReactNode }) {
             <HeaderRight>{actions}</HeaderRight>
           </MobileTopBar>
 
-          {(action || !onProfile) && (
+          {(action || onHome) && (
             <ContentActionBar>
-              {!onProfile && (
+              {onHome && (
                 <AddButton to="/add">
                   <PlusIcon size={16} />
                   {t('Add food')}
@@ -671,7 +698,9 @@ function LayoutShell({ children }: { children: ReactNode }) {
     <Shell>
       <Sentinel ref={sentinelRef} />
       <Header $scrolled={scrolled}>
-        <Brand>{brand}</Brand>
+        <HeaderStart>
+          <Brand>{brand}</Brand>
+        </HeaderStart>
         <DesktopNav>
           {navItems.map((item) => (
             <NavItem key={item.to} to={item.to} end={item.end}>
@@ -679,7 +708,9 @@ function LayoutShell({ children }: { children: ReactNode }) {
             </NavItem>
           ))}
         </DesktopNav>
-        <HeaderRight>{actions}</HeaderRight>
+        <HeaderEnd>
+          <HeaderRight>{actions}</HeaderRight>
+        </HeaderEnd>
       </Header>
 
       <Main>{children}</Main>

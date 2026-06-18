@@ -46,7 +46,11 @@ export const Layer = styled.div`
   pointer-events: none;
 `;
 
-export const Mover = styled.div<{ $reduced: boolean; $dragging: boolean }>`
+export const Mover = styled.div<{
+  $reduced: boolean;
+  $dragging: boolean;
+  $avoiding?: boolean;
+}>`
   position: absolute;
   top: 0;
   left: 0;
@@ -54,7 +58,9 @@ export const Mover = styled.div<{ $reduced: boolean; $dragging: boolean }>`
   transition: ${(p) =>
     p.$dragging || p.$reduced
       ? 'none'
-      : 'transform 5.2s cubic-bezier(0.45, 0, 0.25, 1)'};
+      : p.$avoiding
+        ? 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)'
+        : 'transform 5.2s cubic-bezier(0.45, 0, 0.25, 1)'};
 `;
 
 export const Anchor = styled.div<{ $dragging: boolean }>`

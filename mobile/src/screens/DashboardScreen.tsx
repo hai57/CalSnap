@@ -1,4 +1,4 @@
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import {
   Alert,
@@ -14,6 +14,7 @@ import type { DailySummary, FoodEntry } from "@shared/types";
 
 import { api } from "../api";
 import { Card } from "../components";
+import { WeekChart } from "../components/WeekChart";
 import { resolveImageUrl } from "../config";
 import { formatTime, todayStr } from "../date";
 import { useAuth } from "../auth";
@@ -23,6 +24,7 @@ import { colors } from "../theme";
 const DEFAULT_GOAL = { calorie_target: 2000, protein_target: 120, carb_target: 250, fat_target: 70 };
 
 export function DashboardScreen() {
+  const navigation = useNavigation<any>();
   const { logout } = useAuth();
   const { t } = useLang();
   const [summary, setSummary] = useState<DailySummary | null>(null);
@@ -83,6 +85,8 @@ export function DashboardScreen() {
           <Macro label={t("Fat")} value={totals.fat} color={colors.fat} />
         </View>
       </Card>
+
+      <WeekChart onEditGoals={() => navigation.navigate("Goals")} />
 
       <View>
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>

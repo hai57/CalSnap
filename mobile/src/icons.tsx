@@ -35,6 +35,25 @@ export function PlusIcon({ size, color = '#000' }: IconProps) {
   );
 }
 
+export function HomeIcon({ size, color = '#000' }: IconProps) {
+  return (
+    <Base size={size}>
+      <Path d="m3 10 9-7 9 7" {...stroke(color)} />
+      <Path d="M5 10v10h14V10" {...stroke(color)} />
+    </Base>
+  );
+}
+
+export function HeadphonesIcon({ size, color = '#000' }: IconProps) {
+  return (
+    <Base size={size}>
+      <Path d="M4 14a8 8 0 0 1 16 0" {...stroke(color)} />
+      <Path d="M4 14v4a2 2 0 0 0 2 2h1v-6H5" {...stroke(color)} />
+      <Path d="M20 14v4a2 2 0 0 1-2 2h-1v-6h2" {...stroke(color)} />
+    </Base>
+  );
+}
+
 export function CheckIcon({ size, color = '#000' }: IconProps) {
   return (
     <Base size={size}>

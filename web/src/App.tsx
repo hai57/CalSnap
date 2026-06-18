@@ -12,6 +12,7 @@ import { Goals } from './pages/Goals';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
+import { Workout } from './pages/Workout';
 import { colors } from './styles/theme';
 
 const FullScreenCenter = styled.div`
@@ -80,6 +81,14 @@ export default function App() {
         element={
           <Protected>
             <Focus />
+          </Protected>
+        }
+      />
+      <Route
+        path="/workout"
+        element={
+          <Protected>
+            <Workout />
           </Protected>
         }
       />

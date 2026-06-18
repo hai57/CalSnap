@@ -2,26 +2,33 @@ import { usePersisted } from '@src/hooks/FocusHooks';
 import { useLang } from '@src/i18n';
 import { useState } from 'react';
 import { CODE_SHORTCUTS, DEV_ENGINES, K } from './constants';
+import { Panel } from '@src/pages/StFocus';
 import {
-  ActionBtn,
-  Card,
-  CardBody,
-  CardDot,
-  CardHead,
-  CardTitle,
-  Grid,
-  Hint,
-  InsetField,
-  Notes,
-  Panel,
-  Select,
-  Shortcut,
-  ShortcutGrid,
-  ShortcutLabel,
-  ShortcutMark,
-} from '@src/pages/StFocus';
-import { Row } from '@src/pages/StDashboard';
-import { SearchIcon } from '../BaseIcons';
+  CodeBlock,
+  CodeBlockHead,
+  CodeBlockTitle,
+  CodeBody,
+  CodeBrand,
+  CodeHero,
+  CodeHint,
+  CodeLogo,
+  CodePrompt,
+  CodePromptBtn,
+  CodePromptCaret,
+  CodePromptField,
+  CodePromptSelect,
+  CodeShortcut,
+  CodeShortcutLabel,
+  CodeShortcutMark,
+  CodeShortcuts,
+  CodeSnippet,
+  CodeSnippetBar,
+  CodeSnippetWrap,
+  CodeStage,
+  CodeStatus,
+  CodeSub,
+  CodeTitle,
+} from './StCodePanel';
 
 export function CodingPanel() {
   const { t } = useLang();
@@ -51,84 +58,106 @@ export function CodingPanel() {
 
   return (
     <Panel>
-      <Grid>
-        <Card>
-          <CardHead>
-            <CardDot $color="#f48024" />
-            <CardTitle>{t('Stack Overflow search')}</CardTitle>
-          </CardHead>
-          <Row onSubmit={soGo}>
-            <InsetField
-              value={soQuery}
-              onChange={(e) => setSoQuery(e.target.value)}
-              placeholder={t('e.g. dependency injection scope')}
-              aria-label={t('Stack Overflow search')}
-            />
-            <ActionBtn type="submit" aria-label={t('Search')}>
-              <SearchIcon size={16} />
-            </ActionBtn>
-          </Row>
-          <CardBody>
-            <ShortcutGrid>
+      <CodeStage>
+        <CodeHero>
+          <CodeBrand>
+            <CodeLogo aria-hidden="true">{'</>'}</CodeLogo>
+            <div>
+              <CodeTitle>{t('Coding')}</CodeTitle>
+              <CodeSub>~/focus › search · ref · snippet</CodeSub>
+            </div>
+          </CodeBrand>
+          <CodeStatus>{t('Ready')}</CodeStatus>
+        </CodeHero>
+
+        <CodeBody>
+          <CodeBlock>
+            <div>
+              <CodeBlockHead>{t('Stack Overflow')}</CodeBlockHead>
+              <CodeBlockTitle>{t('Search the swarm')}</CodeBlockTitle>
+            </div>
+
+            <CodePrompt onSubmit={soGo}>
+              <CodePromptCaret>$</CodePromptCaret>
+              <CodePromptField
+                value={soQuery}
+                onChange={(e) => setSoQuery(e.target.value)}
+                placeholder={t('e.g. dependency injection scope')}
+                aria-label={t('Stack Overflow search')}
+              />
+              <CodePromptBtn type="submit">{t('Run')}</CodePromptBtn>
+            </CodePrompt>
+
+            <CodeShortcuts>
               {CODE_SHORTCUTS.map((s) => (
-                <Shortcut
+                <CodeShortcut
                   key={s.lbl}
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   $color={s.c}
                 >
-                  <ShortcutMark $color={s.c}>{s.lbl[0]}</ShortcutMark>
-                  <ShortcutLabel>{s.lbl}</ShortcutLabel>
-                </Shortcut>
+                  <CodeShortcutMark $color={s.c}>{s.lbl[0]}</CodeShortcutMark>
+                  <CodeShortcutLabel>{s.lbl}</CodeShortcutLabel>
+                </CodeShortcut>
               ))}
-            </ShortcutGrid>
-          </CardBody>
-          <Hint>
-            {t("Opens in a new tab (these sites can't be embedded).")}
-          </Hint>
-        </Card>
+            </CodeShortcuts>
 
-        <Card>
-          <CardHead>
-            <CardDot $color="#b06cff" />
-            <CardTitle>{t('Dev quick-search')}</CardTitle>
-          </CardHead>
-          <Row onSubmit={devGo}>
-            <Select
-              value={devEngine}
-              onChange={(e) => setDevEngine(e.target.value)}
-              aria-label={t('Search source')}
-            >
-              {DEV_ENGINES.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.label}
-                </option>
-              ))}
-            </Select>
-            <InsetField
-              value={devQuery}
-              onChange={(e) => setDevQuery(e.target.value)}
-              placeholder={t('Search query…')}
-              aria-label={t('Search query…')}
-            />
-            <ActionBtn type="submit">{t('Go')}</ActionBtn>
-          </Row>
+            <CodeHint>
+              {t('// opens in new tab — some sites refuse embed')}
+            </CodeHint>
+          </CodeBlock>
 
-          <CardHead style={{ marginTop: '0.5rem' }}>
-            <CardDot $color="#1db954" />
-            <CardTitle>{t('Snippet scratchpad')}</CardTitle>
-          </CardHead>
-          <CardBody>
-            <Notes
-              value={snippets}
-              onChange={(e) => setSnippets(e.target.value)}
-              placeholder={t('Stash code snippets, commands, regexes…')}
-            />
-          </CardBody>
-          <Hint>{t('Saved locally')}</Hint>
-        </Card>
-      </Grid>
+          <CodeBlock>
+            <div>
+              <CodeBlockHead>{t('Dev quick-search')}</CodeBlockHead>
+              <CodeBlockTitle>{t('Jump to docs')}</CodeBlockTitle>
+            </div>
+
+            <CodePrompt onSubmit={devGo}>
+              <CodePromptSelect
+                value={devEngine}
+                onChange={(e) => setDevEngine(e.target.value)}
+                aria-label={t('Search source')}
+              >
+                {DEV_ENGINES.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.label}
+                  </option>
+                ))}
+              </CodePromptSelect>
+              <CodePromptField
+                value={devQuery}
+                onChange={(e) => setDevQuery(e.target.value)}
+                placeholder={t('Search query…')}
+                aria-label={t('Search query…')}
+              />
+              <CodePromptBtn type="submit">{t('Go')}</CodePromptBtn>
+            </CodePrompt>
+
+            <div>
+              <CodeBlockHead>{t('Snippet scratchpad')}</CodeBlockHead>
+              <CodeBlockTitle>{t('Stash anything')}</CodeBlockTitle>
+            </div>
+
+            <CodeSnippetWrap>
+              <CodeSnippetBar>
+                <span className="dot r" />
+                <span className="dot y" />
+                <span className="dot g" />
+                ~/snippets.md
+                <small>{t('local')}</small>
+              </CodeSnippetBar>
+              <CodeSnippet
+                value={snippets}
+                onChange={(e) => setSnippets(e.target.value)}
+                placeholder={t('// commands, regexes, one-liners…')}
+                spellCheck={false}
+              />
+            </CodeSnippetWrap>
+          </CodeBlock>
+        </CodeBody>
+      </CodeStage>
     </Panel>
   );
 }
