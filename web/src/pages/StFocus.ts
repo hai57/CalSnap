@@ -332,8 +332,7 @@ export const TintedPanel = styled.div<{ $accent: string }>`
   position: relative;
   padding: 1.5rem;
   border-radius: 1.25rem;
-  border: 1px solid
-    color-mix(in srgb, ${(p) => p.$accent} 22%, transparent);
+  border: 1px solid color-mix(in srgb, ${(p) => p.$accent} 22%, transparent);
   background:
     radial-gradient(
       ellipse 80% 60% at 0% 0%,
