@@ -13,8 +13,12 @@ export const HeaderRow = styled.div`
 
 export const EditGoalsButton = styled(SecondaryButton).attrs({ as: Link })`
   text-decoration: none;
+  width: 120px;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
   &:hover {
     background-color: ${colors.brand500};
+    color: ${colors.onAccent};
   }
 `;
 

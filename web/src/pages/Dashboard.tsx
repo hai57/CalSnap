@@ -26,6 +26,8 @@ import { formatDayLabel, todayStr, toDateStr } from '../lib/date';
 import { formatTime } from '../lib/date';
 import { Card } from '../styles/ui';
 import { colors } from '../styles/theme';
+import { useHeaderAction } from '../components/LayoutAction';
+import { PencilIcon } from '../components/BaseIcons';
 import {
   DeleteButton,
   EmptyLink,
@@ -86,6 +88,14 @@ export function Dashboard() {
   const qc = useQueryClient();
   const { t, lang } = useLang();
 
+  useHeaderAction(
+    <EditGoalsButton to="/goals">
+      <PencilIcon size={16} />
+      {t('Edit goals')}
+    </EditGoalsButton>,
+    [t],
+  );
+
   const { data, isLoading } = useQuery<DailySummary>({
     queryKey: ['summary', day],
     queryFn: () => api.summary(day),
@@ -142,7 +152,6 @@ export function Dashboard() {
             })}
           </Subtitle>
         </div>
-        <EditGoalsButton to="/goals">{t('Edit goals')}</EditGoalsButton>
       </HeaderRow>
 
       <Grid>

@@ -903,7 +903,7 @@ function MouthFor({ mood }: { mood: Mood }) {
   }
 }
 
-function ChibiBot({ mood, width = BOT_W }: { mood: Mood; width?: number }) {
+export function ChibiBot({ mood, width = BOT_W }: { mood: Mood; width?: number }) {
   const accent = MOOD_ACCENT[mood];
   const glowOpacity = mood === 'sad' ? 0.35 : 0.8;
   return (

@@ -17,7 +17,7 @@ import {
 import { colors } from '../styles/theme';
 import { PrimaryButton } from '../styles/ui';
 import { LayoutActionProvider, useLayoutActionSlot } from './LayoutAction';
-import { NutriBot } from './NutriBot';
+import { ChibiBot, NutriBot } from './NutriBot';
 import {
   HeaderRight,
   Main,
@@ -50,8 +50,8 @@ const Header = styled.header<{ $scrolled: boolean }>`
   position: sticky;
   top: 0;
   z-index: 30;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 1.1rem 1rem;
   margin: 0 -1rem;
@@ -73,7 +73,7 @@ const Header = styled.header<{ $scrolled: boolean }>`
 const HeaderStart = styled.div`
   display: flex;
   align-items: center;
-  justify-self: start;
+  gap: 2rem;
   min-width: 0;
 `;
 
@@ -113,8 +113,7 @@ const BrandName = styled.span`
 const DesktopNav = styled.nav`
   display: none;
   align-items: center;
-  justify-self: center;
-  gap: 0.25rem;
+  gap: 1.25rem;
 
   @media (min-width: 640px) {
     display: flex;
@@ -124,10 +123,12 @@ const DesktopNav = styled.nav`
 const AddButton = styled(PrimaryButton).attrs({ as: Link })`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.375rem;
   text-decoration: none;
   font-size: 0.875rem;
   padding: 0.5rem 0.875rem;
+  width: 120px;
 `;
 
 // ---- Sidebar layout ----
@@ -280,6 +281,28 @@ const AsideFooter = styled.div`
   align-items: stretch;
   padding-top: 1rem;
   border-top: 1px solid ${colors.surfaceBorder};
+`;
+
+const AsideBotIcon = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  margin: 0 auto;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${colors.slate100};
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 const AccountWrap = styled.div`
@@ -604,13 +627,13 @@ function LayoutShell({ children }: { children: ReactNode }) {
 
   const actions = (
     <>
-      {action}
       {onHome && (
         <AddButton to="/add">
           <PlusIcon size={16} />
           {t('Add food')}
         </AddButton>
       )}
+      {action}
       <AccountDropdown placement="down" />
     </>
   );
@@ -661,6 +684,16 @@ function LayoutShell({ children }: { children: ReactNode }) {
               ))}
           </AsideNav>
           <AsideSpacer />
+          {collapsed && (
+            <AsideBotIcon
+              type="button"
+              onClick={toggleCollapsed}
+              title={t('Ask NutriBot')}
+              aria-label={t('Ask NutriBot')}
+            >
+              <ChibiBot mood="happy" width={34} />
+            </AsideBotIcon>
+          )}
           <AsideFooter>
             <AccountDropdown placement="up" collapsed={collapsed} />
           </AsideFooter>
@@ -689,7 +722,7 @@ function LayoutShell({ children }: { children: ReactNode }) {
           {mobileNav}
         </SideContent>
 
-        <NutriBot side="left" />
+        {!collapsed && <NutriBot side="left" />}
       </SideWrap>
     );
   }
@@ -700,14 +733,14 @@ function LayoutShell({ children }: { children: ReactNode }) {
       <Header $scrolled={scrolled}>
         <HeaderStart>
           <Brand>{brand}</Brand>
+          <DesktopNav>
+            {navItems.map((item) => (
+              <NavItem key={item.to} to={item.to} end={item.end}>
+                {t(item.label)}
+              </NavItem>
+            ))}
+          </DesktopNav>
         </HeaderStart>
-        <DesktopNav>
-          {navItems.map((item) => (
-            <NavItem key={item.to} to={item.to} end={item.end}>
-              {t(item.label)}
-            </NavItem>
-          ))}
-        </DesktopNav>
         <HeaderEnd>
           <HeaderRight>{actions}</HeaderRight>
         </HeaderEnd>
